@@ -16,22 +16,22 @@ class Canfit < Formula
   on_macos do
     on_arm do
       url "https://github.com/federicolaterra/canfit/releases/download/v1.0.0/canfit-aarch64-apple-darwin.tar.xz"
-      sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+      sha256 "819d3795d6b638ce43040ad8fe5ea6a4a091970b8aab883a61298bdb4749e96d"
     end
     on_intel do
       url "https://github.com/federicolaterra/canfit/releases/download/v1.0.0/canfit-x86_64-apple-darwin.tar.xz"
-      sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+      sha256 "089c96e8c73f709e026205783594f072de85163aa1ec8e953ba45f76f12c6c9d"
     end
   end
 
   on_linux do
     on_arm do
       url "https://github.com/federicolaterra/canfit/releases/download/v1.0.0/canfit-aarch64-unknown-linux-musl.tar.xz"
-      sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+      sha256 "c19cd4229744f0dbdc2d39c84634cabbbbeb3484e430c7f059b991a42fd8c710"
     end
     on_intel do
       url "https://github.com/federicolaterra/canfit/releases/download/v1.0.0/canfit-x86_64-unknown-linux-musl.tar.xz"
-      sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+      sha256 "36a789dff2ec33a76f3a0a20280c04e0e4dc1977ac41257d8e9b1c57a5c607f7"
     end
   end
 
