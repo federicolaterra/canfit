@@ -6,7 +6,7 @@
   <img src="docs/assets/canfit-logo.svg" alt="canfit" height="80">
 </p>
 
-<h3>The <img src="docs/assets/top-chip.svg" alt="top" height="22" align="absmiddle"> command for people running local models and apps</h3>
+<h3>The <img src="docs/assets/top-chip.svg" alt="top" height="22" align="absmiddle"> command for people running local LLMs and apps</h3>
 
 <p>
   <img src="https://img.shields.io/badge/release-1.0.0-2563EB?style=for-the-badge&labelColor=17221F" alt="Release 1.0.0">

@@ -8,6 +8,11 @@ database format are stable: breaking any of them needs a new major version (2.0.
 
 ## [Unreleased]
 
+### Changed
+
+- New tagline: "The top command for people running local LLMs and apps", in the README, the
+  crate description, `canfit --help` and the Homebrew, Scoop, .deb, .rpm and .msi package metadata.
+
 ## [1.0.0] - 2026-11-11
 
 First public release, on macOS, Windows and Linux: the live monitor, the GGUF fit check, the app

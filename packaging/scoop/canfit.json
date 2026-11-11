@@ -1,6 +1,6 @@
 {
     "version": "1.0.0",
-    "description": "The top for people running AI locally: can this model or app fit right now, and what should I close?",
+    "description": "The top command for people running local LLMs and apps",
     "homepage": "https://github.com/federicolaterra/canfit",
     "license": "MIT",
     "architecture": {
