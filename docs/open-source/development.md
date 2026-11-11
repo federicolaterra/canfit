@@ -2,8 +2,9 @@
 
 ## Prerequisites
 
-- Rust stable via [rustup](https://rustup.rs/). `rust-toolchain.toml` selects stable with
-  `rustfmt` and `clippy`; the minimum supported Rust version is declared in `Cargo.toml`.
+- Rust via [rustup](https://rustup.rs/). `rust-toolchain.toml` pins the toolchain to the minimum
+  supported Rust version declared in `Cargo.toml` (`rust-version`), with `rustfmt` and `clippy`;
+  bump both together.
 - `make` (macOS and Linux). On Windows, run the cargo commands shown below directly.
 
 ## Everyday commands

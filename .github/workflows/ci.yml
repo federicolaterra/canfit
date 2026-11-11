@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # rustup reads rust-toolchain.toml and installs stable with rustfmt and clippy.
+      # rustup reads rust-toolchain.toml and installs the pinned toolchain with rustfmt and clippy.
       - name: Install toolchain
         run: rustup toolchain install
 
