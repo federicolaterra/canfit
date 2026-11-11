@@ -1,0 +1,52 @@
+name: Bug report
+description: Report a reproducible canfit defect.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe what you expected and what happened instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - macOS
+        - Windows
+        - Linux
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: OS version and machine
+      description: For example "macOS 26.1, MacBook Pro M1 Pro, 16 GB" or "Ubuntu 24.04 VM, 8 GB".
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: canfit version
+      description: Output of `canfit --version`.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: The exact command you ran and what you did before it.
+    validations:
+      required: true
+  - type: textarea
+    id: json
+    attributes:
+      label: "`canfit --json` output"
+      description: >
+        Output of the same command with `--json`, if available. Review it first: it contains the
+        names of running processes and files on your machine. Remove anything you don't want to
+        share.
+      render: json

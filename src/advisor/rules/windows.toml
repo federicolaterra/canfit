@@ -1,0 +1,157 @@
+# canfit process classification rules for Windows (ADR-013, ADR-016).
+#
+# Each process is checked against the rules in file order; the first rule that matches decides
+# its class. An application group takes the most restrictive class of its processes
+# (never > caution > safe). Processes no rule matches are "caution", never "safe".
+#
+# Checks hard-coded in canfit come before these rules and cannot be overridden here: canfit
+# itself, every ancestor of canfit (the current terminal and shell), processes of other users
+# (SYSTEM, LOCAL SERVICE, NETWORK SERVICE, Window Manager and other accounts), processes whose
+# owner canfit can't read, and anything in the user's protected list are always "never".
+#
+# Matchers (all case-insensitive, any one is enough):
+#   names          exact process name (the executable's file name, e.g. "chrome.exe")
+#   name_prefixes  start of the process name
+#   bundles        name of the app's root executable without ".exe" (e.g. "Docker Desktop"):
+#                  matches every helper the app started from its own install folder
+#   path_prefixes  start of the executable path; "%SystemRoot%" is replaced by the Windows
+#                  folder (normally C:\Windows)
+#
+# Order matters: specific "caution" exceptions for programs that ship with Windows come before
+# the broad "never" path rule.
+
+schema_version = 1
+
+# --- never: the desktop session itself -----------------------------------------------------------
+
+[[rule]]
+class = "never"
+reason = "part of Windows: closing it would break your session"
+names = [
+  "System", "Idle", "System Idle Process", "Registry", "Memory Compression", "Secure System",
+  "smss.exe", "csrss.exe", "wininit.exe", "services.exe", "lsass.exe", "lsaiso.exe",
+  "winlogon.exe", "LogonUI.exe", "dwm.exe", "fontdrvhost.exe", "svchost.exe", "sihost.exe",
+  "taskhostw.exe", "ctfmon.exe", "RuntimeBroker.exe", "dllhost.exe", "audiodg.exe",
+  "spoolsv.exe", "WmiPrvSE.exe", "SearchIndexer.exe", "SearchHost.exe", "SearchApp.exe",
+  "SearchProtocolHost.exe", "SearchFilterHost.exe", "StartMenuExperienceHost.exe",
+  "ShellExperienceHost.exe", "ShellHost.exe", "TextInputHost.exe", "ApplicationFrameHost.exe",
+  "LockApp.exe", "smartscreen.exe", "SecurityHealthService.exe", "SecurityHealthSystray.exe",
+  "MsMpEng.exe", "NisSrv.exe", "MpDefenderCoreService.exe", "SgrmBroker.exe", "WUDFHost.exe",
+  "dasHost.exe", "backgroundTaskHost.exe", "UserOOBEBroker.exe", "CompPkgSrv.exe",
+  "SystemSettingsBroker.exe", "WidgetService.exe",
+]
+
+[[rule]]
+class = "never"
+reason = "the Windows shell: it draws the taskbar, Start and the desktop, and restarts on its own"
+names = ["explorer.exe"]
+
+[[rule]]
+class = "never"
+reason = "a terminal session: closing it ends the commands running in it"
+names = [
+  "conhost.exe", "OpenConsole.exe", "cmd.exe", "powershell.exe", "pwsh.exe", "powershell_ise.exe",
+  "bash.exe", "sh.exe", "zsh.exe", "fish.exe", "nu.exe", "wsl.exe", "wslhost.exe",
+  "wslrelay.exe", "wslservice.exe", "ssh.exe", "sshd.exe", "ssh-agent.exe", "sudo.exe",
+  "gsudo.exe", "mintty.exe", "winpty-agent.exe",
+]
+
+[[rule]]
+class = "never"
+reason = "the memory of WSL or Docker's Linux virtual machine: stop it with `wsl --shutdown` or from Docker Desktop instead"
+names = ["vmmem", "vmmemWSL", "vmmem.exe", "vmmemWSL.exe", "vmwp.exe", "vmcompute.exe"]
+
+[[rule]]
+class = "never"
+reason = "canfit itself"
+names = ["canfit.exe", "canfit"]
+
+# --- caution: programs that ship with Windows and are fine to close -----------------------------
+
+[[rule]]
+class = "caution"
+reason = "a document app: you may lose unsaved work"
+names = ["notepad.exe", "mspaint.exe", "wordpad.exe", "write.exe", "SnippingTool.exe"]
+
+[[rule]]
+class = "caution"
+reason = "web views inside other apps (WebView2): those apps may lose what they show"
+names = ["msedgewebview2.exe"]
+
+# --- never: everything else that ships with Windows ---------------------------------------------
+
+[[rule]]
+class = "never"
+reason = "part of Windows"
+path_prefixes = ["%SystemRoot%\\", "C:\\Program Files\\Windows Defender\\", "C:\\ProgramData\\Microsoft\\Windows Defender\\"]
+
+# --- caution: work you may lose -----------------------------------------------------------------
+
+[[rule]]
+class = "caution"
+reason = "a model server: the loaded model is unloaded and running requests stop"
+names = [
+  "llama-server.exe", "llama-cli.exe", "llama-cpp-server.exe", "ollama.exe", "ollama app.exe",
+  "ollama_llama_server.exe", "lms.exe", "koboldcpp.exe", "koboldcpp_cu12.exe", "whisper-server.exe",
+  "LM Studio.exe", "Jan.exe", "GPT4All.exe", "Msty.exe", "AnythingLLM.exe",
+]
+bundles = ["ollama app", "LM Studio", "Jan", "GPT4All", "Msty", "AnythingLLM"]
+
+[[rule]]
+class = "caution"
+reason = "containers and virtual machines stop; their unsaved state may be lost"
+names = [
+  "Docker Desktop.exe", "com.docker.backend.exe", "com.docker.build.exe", "com.docker.proxy.exe",
+  "VirtualBox.exe", "VirtualBoxVM.exe", "VBoxHeadless.exe", "vmware.exe", "vmware-vmx.exe",
+  "qemu-system-x86_64.exe", "qemu-system-aarch64.exe", "Podman Desktop.exe", "Rancher Desktop.exe",
+]
+bundles = ["Docker Desktop", "VirtualBox", "vmware", "Podman Desktop", "Rancher Desktop"]
+
+[[rule]]
+class = "caution"
+reason = "an editor or IDE: you may lose unsaved work"
+names = [
+  "Code.exe", "Code - Insiders.exe", "Cursor.exe", "Windsurf.exe", "Zed.exe", "devenv.exe",
+  "studio64.exe", "idea64.exe", "pycharm64.exe", "webstorm64.exe", "goland64.exe", "clion64.exe",
+  "rustrover64.exe", "rider64.exe", "datagrip64.exe", "sublime_text.exe", "notepad++.exe",
+  "WINWORD.EXE", "EXCEL.EXE", "POWERPNT.EXE", "ONENOTE.EXE", "OUTLOOK.EXE", "MSACCESS.EXE",
+  "Photoshop.exe", "Adobe Premiere Pro.exe", "AfterFX.exe", "Illustrator.exe", "blender.exe",
+  "Figma.exe", "Obsidian.exe", "Notion.exe", "Acrobat.exe", "AcroRd32.exe",
+]
+bundles = ["Code", "Code - Insiders", "Cursor", "Windsurf", "Zed", "devenv", "Figma", "Obsidian", "Notion"]
+
+[[rule]]
+class = "caution"
+reason = "a terminal app: commands running in its windows stop"
+names = [
+  "WindowsTerminal.exe", "wezterm-gui.exe", "alacritty.exe", "Hyper.exe", "Tabby.exe",
+  "ConEmu64.exe", "ConEmu.exe", "Warp.exe", "kitty.exe",
+]
+
+[[rule]]
+class = "caution"
+reason = "a local database: closing it may interrupt writes"
+names = [
+  "postgres.exe", "mysqld.exe", "mariadbd.exe", "mongod.exe", "redis-server.exe", "clickhouse.exe",
+  "qdrant.exe", "milvus.exe",
+]
+
+# --- safe: apps that restore their state ---------------------------------------------------------
+
+[[rule]]
+class = "safe"
+reason = "a browser: it can reopen your tabs"
+names = [
+  "chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe", "vivaldi.exe", "Arc.exe",
+  "zen.exe", "chromium.exe", "librewolf.exe", "waterfox.exe", "identity_helper.exe",
+]
+bundles = ["chrome", "msedge", "firefox", "brave", "opera", "vivaldi", "Arc", "zen", "chromium"]
+
+[[rule]]
+class = "safe"
+reason = "a chat or media app: it syncs and reopens where you left it"
+names = [
+  "slack.exe", "Discord.exe", "Spotify.exe", "ms-teams.exe", "Teams.exe", "Zoom.exe",
+  "WhatsApp.exe", "Telegram.exe", "Signal.exe", "Messenger.exe",
+]
+bundles = ["slack", "Discord", "Spotify", "ms-teams", "Teams", "Zoom", "WhatsApp", "Telegram", "Signal"]

@@ -1,0 +1,60 @@
+{
+  "description": "16 GB Apple Silicon Mac at rest with 4 GB of old swap that is not growing.",
+  "source": "recorded: vm_stat, sysctl vm.swapusage, kern.memorystatus_vm_pressure_level and hw.memsize on macOS 26.6.2, 2026-11-09, two readings 1 s apart (swap sizes are rounded to 0.01 MB by sysctl)",
+  "expected_level": "calm",
+  "total_bytes": 17179869184,
+  "kernel_pressure_level": 1,
+  "iogpu_wired_limit_mb": 0,
+  "samples": [
+    {
+      "elapsed_ms": 0,
+      "vm": {
+        "page_size": 16384,
+        "free": 4076,
+        "active": 388175,
+        "inactive": 348484,
+        "speculative": 39006,
+        "wired": 168455,
+        "purgeable": 7312,
+        "external": 209404,
+        "internal": 566261,
+        "compressor_occupied": 47910,
+        "compressor_stored": 832053,
+        "swapouts": 1024121
+      },
+      "swap": {
+        "total_bytes": 5368709120,
+        "used_bytes": 4336847421,
+        "free_bytes": 1031861699,
+        "encrypted": true
+      }
+    },
+    {
+      "elapsed_ms": 1000,
+      "vm": {
+        "page_size": 16384,
+        "free": 5996,
+        "active": 388175,
+        "inactive": 348484,
+        "speculative": 39006,
+        "wired": 168455,
+        "purgeable": 7312,
+        "external": 209404,
+        "internal": 566261,
+        "compressor_occupied": 47910,
+        "compressor_stored": 832053,
+        "swapouts": 1024121
+      },
+      "swap": {
+        "total_bytes": 5368709120,
+        "used_bytes": 4336847421,
+        "free_bytes": 1031861699,
+        "encrypted": true
+      }
+    }
+  ],
+  "expected": {
+    "used_bytes": 12702744576,
+    "available_bytes": 4477124608
+  }
+}

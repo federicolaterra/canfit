@@ -1,0 +1,16 @@
+# Link the C runtime statically on Windows (MSVC), so canfit.exe runs without the Visual C++
+# Redistributable (ADR-016). Note: a RUSTFLAGS environment variable replaces these flags; CI
+# passes the same flag explicitly.
+[target.'cfg(all(windows, target_env = "msvc"))']
+rustflags = ["-C", "target-feature=+crt-static"]
+
+# Linux release binaries are fully static musl builds that run on any distribution (ADR-001,
+# ADR-017). rust-lld ships with the Rust toolchain, so they link the same way on every host. Musl
+# targets link statically by default. Since the history database (ADR-018) the build also compiles
+# SQLite's C source, which needs a C compiler for the target: CI uses musl-gcc from musl-tools;
+# from macOS, set CC_<target> to a musl cross compiler (for example `zig cc -target ...`).
+[target.x86_64-unknown-linux-musl]
+linker = "rust-lld"
+
+[target.aarch64-unknown-linux-musl]
+linker = "rust-lld"

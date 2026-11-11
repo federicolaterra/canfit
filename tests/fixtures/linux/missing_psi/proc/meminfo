@@ -1,0 +1,14 @@
+MemTotal:       8048576 kB
+MemFree:        1048576 kB
+MemAvailable:   5242880 kB
+Buffers:        2048 kB
+Cached:         3145728 kB
+SwapCached:          0 kB
+AnonPages:      2400000 kB
+Shmem:          102400 kB
+SReclaimable:   204800 kB
+SUnreclaim:      180000 kB
+SwapTotal:      2097148 kB
+SwapFree:       2097148 kB
+HugePages_Total:       0
+Hugepagesize:       2048 kB

@@ -1,0 +1,16 @@
+● Yes, Qwen2.5 Coder 3B Instruct fits: it needs about 2.6 GB and 5.6 GB is available now.
+
+╭─ Can Qwen2.5 Coder 3B Instruct fit? ───────────────────────────────────────╮
+│  Qwen2.5 Coder 3B Instruct           Q4_K_M · 3.1B params · 36 layers      │
+│  Weights                     1.8 GB  read from GGUF (exact)                │
+│  KV cache                    288 MB  estimated · 8,192 tokens, f16 cache   │
+│  Overhead                    325 MB  estimated · compute buffers, runtime  │
+│  Margin                      245 MB  estimated · 10% safety margin         │
+│  Needed                      2.6 GB  estimated                             │
+│                                                                            │
+│  Available now               5.6 GB  measured · ● 3.0 GB to spare          │
+│  GPU limit                  10.7 GB  estimated · ● 8.0 GB to spare         │
+╰────────────────────────────────────────────────────────────────────────────╯
+  Context 8,192 tokens is canfit's default; the model supports 32,768. Change it with --ctx.
+  Assumes llama.cpp with every layer on the GPU, the default on Apple Silicon.
+  Available memory includes file cache the system can reclaim. Needed memory is an estimate: real use varies with the runtime and its settings.

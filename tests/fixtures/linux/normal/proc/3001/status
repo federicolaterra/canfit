@@ -1,0 +1,6 @@
+Name:	firefox
+State:	S
+PPid:	3000
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+VmRSS:	  450000 kB

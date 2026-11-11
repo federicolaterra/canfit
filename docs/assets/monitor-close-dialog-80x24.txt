@@ -1,0 +1,24 @@
+ ✗ Memory is critical: macOS reports memory pressure as critical; only 931 MB of
+16.0 GB memory is available. Google Chrome is using 9.8 GB.
+╭─ ✗ Memory ───────╮╭─ ▲ Swap ─────────╮╭─ ● CPU ──────────╮╭─ ✗ Pressure ─────╮
+│931 MB available  ││growing 64.0 MB/s ││23% of 10 cores   ││critical · 90/100 │
+│████████████░  94%││███████████░░  81%││███░░░░░░░░░░  23%││████████████░  90%│
+│▄▄▄▄▄▄▄▄▅▅▅▅▅▅▅▅▅▅││▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆││▁▁▁▁▁▁▂▂▂▂▂▂▃▃▃▃▃▃││▃▄▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆│
+╰──────── measured ╯╰──────── measured ╯╰──────── measured ╯╰─────── estimated ╯
+╭─╭─ Close apps ─────────────────────────────────────────────────────────────╮─╮
+│▸│ 1 app (2 processes) will be asked to quit:                               │ │
+│ │   Google Chrome (2 processes):                                           │n│
+│ │     Google Chrome (pid 300)                                              │n│
+│ │     Google Chrome Helper (Renderer) (pid 301)                            │ │
+│ │                                                                          │ │
+│ │                                                                          │n│
+│ │ ▲ Ask them to quit now?                                                  │ │
+│ │ y yes   any other key no                                                 │ │
+│ ╰──────────────────────────────────────────────────────────────────────────╯ │
+╰ 1/15 ───────────────────────────────────────── measured · physical footprint ╯
+╭─ Why? ───────────────────────────────────────────────────────────────────────╮
+│● Google Chrome: safe, a browser: it can reopen your tabs. Press x to close it│
+│(canfit asks first).                                                          │
+│Memory is critical because macOS reports memory pressure as critical; only 931│
+╰────────────────────────────────────────────────────────────────────── ? more ╯
+ ↑↓ move  x close  ? explain  t theme  q quit                  every 1 s · dark

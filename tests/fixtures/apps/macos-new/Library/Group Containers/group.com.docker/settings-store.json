@@ -1,0 +1,8 @@
+{
+  "AutoStart": false,
+  "Cpus": 4,
+  "DiskSizeMiB": 65536,
+  "MemoryMiB": 6144,
+  "SwapMiB": 1024,
+  "SettingsVersion": 40
+}

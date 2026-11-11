@@ -1,0 +1,16 @@
+# Executable paths recorded with `ps -axo comm=` on macOS 26 (Apple Silicon), 2026-11-09.
+# Format: <executable path><TAB><expected outermost .app bundle, or "-" for none>.
+/Applications/Google Chrome.app/Contents/MacOS/Google Chrome	/Applications/Google Chrome.app
+/Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/156.0.8078.80/Helpers/Google Chrome Helper (Renderer).app/Contents/MacOS/Google Chrome Helper (Renderer)	/Applications/Google Chrome.app
+/Applications/Google Chrome.app/Contents/Frameworks/Google Chrome Framework.framework/Versions/156.0.8078.80/Helpers/chrome_crashpad_handler	/Applications/Google Chrome.app
+/Applications/Slack.app/Contents/Frameworks/Slack Helper (Renderer).app/Contents/MacOS/Slack Helper (Renderer)	/Applications/Slack.app
+/Applications/Claude.app/Contents/Helpers/chrome-native-host	/Applications/Claude.app
+/Applications/Adobe Acrobat DC/Adobe Acrobat.app/Contents/Helpers/AdobeResourceSynchronizer.app/Contents/MacOS/AdobeResourceSynchronizer	/Applications/Adobe Acrobat DC/Adobe Acrobat.app
+/Applications/Utilities/Adobe Sync/CoreSync/Core Sync.app/Contents/PlugIns/ACCFinderSync.appex/Contents/MacOS/ACCFinderSync	/Applications/Utilities/Adobe Sync/CoreSync/Core Sync.app
+/System/Applications/Calendar.app/Contents/PlugIns/CalendarWidgetExtension.appex/Contents/MacOS/CalendarWidgetExtension	/System/Applications/Calendar.app
+/Library/Apple/System/Library/CoreServices/XProtect.app/Contents/XPCServices/XProtectPluginService.xpc/Contents/MacOS/XProtectPluginService	/Library/Apple/System/Library/CoreServices/XProtect.app
+/System/Library/CoreServices/TimeMachine/backupd	-
+/System/Cryptexes/App/usr/libexec/SafariLaunchAgent	-
+/opt/homebrew/bin/llama-server	-
+/usr/local/bin/ollama	-
+/Users/someone/my.app.tools/bin/run	-

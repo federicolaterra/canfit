@@ -1,0 +1,165 @@
+# canfit process classification rules for Linux (ADR-013, ADR-017).
+#
+# Each process is checked against the rules in file order; the first rule that matches decides
+# its class. An application group takes the most restrictive class of its processes
+# (never > caution > safe). Processes no rule matches are "caution", never "safe".
+#
+# Checks hard-coded in canfit come before these rules and cannot be overridden here: canfit
+# itself, every ancestor of canfit (the current terminal, its shell, systemd), processes of root
+# and of every other user (system and service accounts such as messagebus, gdm or ollama),
+# processes whose owner canfit can't read, and anything in the user's protected list are always
+# "never". Kernel threads are not listed at all and can't be signalled.
+#
+# Matchers (all case-insensitive, any one is enough):
+#   names          exact process name (the executable's file name, e.g. "chrome")
+#   name_prefixes  start of the process name
+#   bundles        the app a process belongs to: a systemd service without ".service"
+#                  ("ollama"), a Flatpak app id ("org.mozilla.firefox"), a Snap name ("firefox"),
+#                  or the file name of the root executable of an app with helpers ("chrome")
+#   path_prefixes  start of the executable path
+#
+# Order matters: "caution" exceptions that live in system folders (terminals in /usr/libexec)
+# come before the broad "never" path rules.
+
+schema_version = 1
+
+# --- never: the system and the desktop session ---------------------------------------------------
+
+[[rule]]
+class = "never"
+reason = "part of Linux: closing it would break the system or your session"
+names = [
+  "init", "systemd", "kthreadd", "dbus-daemon", "dbus-broker", "dbus-broker-launch",
+  "polkitd", "udisksd", "upowerd", "accounts-daemon", "NetworkManager", "wpa_supplicant",
+  "ModemManager", "bluetoothd", "rtkit-daemon", "cupsd", "avahi-daemon", "agetty", "login",
+  "pipewire", "pipewire-pulse", "wireplumber", "pulseaudio", "gnome-keyring-daemon", "ssh-agent",
+  "gpg-agent", "ibus-daemon", "fcitx5", "fcitx",
+]
+name_prefixes = ["systemd-", "gvfs", "at-spi", "xdg-", "gsd-", "ibus-", "polkit"]
+
+[[rule]]
+class = "never"
+reason = "the display server or window manager: closing it ends your graphical session"
+names = [
+  "Xorg", "X", "Xwayland", "gnome-shell", "mutter", "kwin_wayland", "kwin_x11", "kwin",
+  "plasmashell", "ksmserver", "kded5", "kded6", "kglobalaccel", "kglobalacceld", "sway", "Hyprland",
+  "weston", "wayfire", "river", "labwc", "niri", "cosmic-comp", "cosmic-session", "xfwm4",
+  "xfce4-session", "xfce4-panel", "xfdesktop", "openbox", "i3", "bspwm", "awesome", "xmonad",
+  "dwm", "herbstluftwm", "qtile", "marco", "muffin", "cinnamon", "budgie-wm", "mate-session",
+  "lxsession", "lxqt-session", "gnome-session-binary", "gnome-session-ctl", "gnome-session",
+  "gdm", "gdm3", "gdm-wayland-session", "gdm-x-session", "sddm", "sddm-helper", "lightdm",
+  "greetd", "Xvfb", "waybar", "swaybg", "mako", "dunst",
+]
+name_prefixes = ["gdm-", "startplasma-", "gnome-session"]
+
+[[rule]]
+class = "never"
+reason = "a shell or terminal session: closing it ends the commands running in it"
+names = [
+  "bash", "sh", "dash", "zsh", "fish", "ksh", "mksh", "tcsh", "csh", "nu", "xonsh", "elvish",
+  "sshd", "sshd-session", "mosh-server", "sudo", "su", "doas", "run0", "tmux", "tmux: server",
+  "screen", "zellij", "script",
+]
+
+[[rule]]
+class = "never"
+reason = "canfit itself"
+names = ["canfit"]
+
+# --- caution: terminals and tools that live in system folders ------------------------------------
+
+[[rule]]
+class = "caution"
+reason = "a terminal app: commands running in its windows stop"
+names = [
+  "gnome-terminal-server", "gnome-terminal", "kgx", "ptyxis", "ptyxis-agent", "konsole",
+  "yakuake", "xfce4-terminal", "mate-terminal", "lxterminal", "qterminal", "tilix", "terminator",
+  "kitty", "alacritty", "wezterm-gui", "wezterm", "foot", "footclient", "ghostty", "xterm",
+  "urxvt", "st", "warp-terminal", "warp", "rio", "cosmic-term", "blackbox",
+]
+bundles = ["gnome-terminal-server", "org.gnome.Ptyxis", "org.gnome.Console", "com.mitchellh.ghostty"]
+
+# --- never: everything else in system folders ----------------------------------------------------
+
+[[rule]]
+class = "never"
+reason = "part of Linux"
+path_prefixes = ["/usr/lib/systemd/", "/lib/systemd/", "/usr/libexec/", "/usr/lib/xorg/", "/sbin/", "/usr/sbin/"]
+
+# --- caution: work you may lose ------------------------------------------------------------------
+
+[[rule]]
+class = "caution"
+reason = "a model server: the loaded model is unloaded and running requests stop"
+names = [
+  "llama-server", "llama-cli", "llama-cpp-server", "ollama", "ollama_llama_server", "lms",
+  "lm-studio", "LM Studio", "koboldcpp", "whisper-server", "vllm", "text-generation-launcher",
+  "jan", "gpt4all", "msty", "anythingllm",
+]
+bundles = ["ollama", "lm-studio", "jan", "ai.jan.Jan", "io.gpt4all.gpt4all"]
+
+[[rule]]
+class = "caution"
+reason = "containers and virtual machines stop; their unsaved state may be lost"
+names = [
+  "dockerd", "containerd", "containerd-shim-runc-v2", "docker", "podman", "conmon", "crun",
+  "qemu-system-x86_64", "qemu-system-aarch64", "VirtualBox", "VirtualBoxVM", "VBoxHeadless",
+  "vmware", "vmware-vmx", "virt-manager", "gnome-boxes", "lxd", "incusd",
+]
+name_prefixes = ["qemu-system-"]
+bundles = ["docker", "containerd", "podman", "libvirtd", "org.gnome.Boxes"]
+
+[[rule]]
+class = "caution"
+reason = "an editor or IDE: you may lose unsaved work"
+names = [
+  "code", "code-insiders", "codium", "cursor", "windsurf", "zed", "zeditor", "zed-editor",
+  "sublime_text", "gedit", "gnome-text-editor", "kate", "kwrite", "mousepad", "pluma", "xed",
+  "emacs", "vim", "nvim", "nano", "helix", "hx", "idea", "pycharm", "webstorm", "goland",
+  "clion", "rustrover", "rider", "studio", "soffice.bin", "libreoffice", "gimp", "inkscape",
+  "krita", "blender", "kdenlive", "obs", "obsidian", "notion-app", "darktable",
+]
+bundles = [
+  "code", "codium", "cursor", "windsurf", "zed", "com.visualstudio.code", "com.vscodium.codium",
+  "dev.zed.Zed", "org.libreoffice.LibreOffice", "org.gimp.GIMP", "org.inkscape.Inkscape",
+  "org.blender.Blender", "md.obsidian.Obsidian", "com.obsproject.Studio",
+]
+
+[[rule]]
+class = "caution"
+reason = "a local database: closing it may interrupt writes"
+names = [
+  "postgres", "mysqld", "mariadbd", "mongod", "redis-server", "valkey-server", "clickhouse",
+  "clickhouse-server", "qdrant", "milvus", "elasticsearch", "opensearch",
+]
+bundles = ["postgresql", "mysql", "mariadb", "mongod", "redis", "redis-server", "qdrant"]
+
+# --- safe: apps that restore their state ---------------------------------------------------------
+
+[[rule]]
+class = "safe"
+reason = "a browser: it can reopen your tabs"
+names = [
+  "chrome", "google-chrome", "chromium", "chromium-browser", "firefox", "firefox-bin",
+  "firefox-esr", "brave", "brave-browser", "opera", "vivaldi-bin", "msedge", "zen", "zen-bin",
+  "librewolf", "waterfox", "epiphany", "falkon",
+]
+bundles = [
+  "chrome", "chromium", "firefox", "firefox-esr", "brave", "msedge", "vivaldi-bin", "opera",
+  "org.mozilla.firefox", "com.google.Chrome", "org.chromium.Chromium", "com.brave.Browser",
+  "com.microsoft.Edge", "com.vivaldi.Vivaldi", "io.github.zen_browser.zen", "io.gitlab.librewolf-community",
+  "org.gnome.Epiphany",
+]
+
+[[rule]]
+class = "safe"
+reason = "a chat or media app: it syncs and reopens where you left it"
+names = [
+  "slack", "Discord", "discord", "spotify", "telegram-desktop", "Telegram", "signal-desktop",
+  "teams-for-linux", "zoom", "whatsapp-for-linux", "element-desktop", "thunderbird",
+]
+bundles = [
+  "slack", "Discord", "discord", "spotify", "signal-desktop", "telegram-desktop",
+  "com.slack.Slack", "com.discordapp.Discord", "com.spotify.Client", "org.telegram.desktop",
+  "org.signal.Signal", "us.zoom.Zoom", "im.riot.Riot", "org.mozilla.Thunderbird",
+]

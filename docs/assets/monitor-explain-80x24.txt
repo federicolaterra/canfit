@@ -1,0 +1,24 @@
+ ✗ Memory is critical: macOS reports memory pressure as critical; only 931 MB of
+16╭─ Explain ────────────────────────────────────────────────────────────────╮
+╭─│Why? Memory is critical because macOS reports memory pressure as critical;│─╮
+│9│only 931 MB of 16.0 GB memory is available. The biggest memory users are  │ │
+│█│Google Chrome (9.8 GB), Ollama (4.0 GB) and Visual Studio Code (1.5 GB)   │%│
+│▄│(measured). The system is also compressing 7.6 GB of app memory to make   │▆│
+╰─│room. Swap is growing, which slows everything down. Closing Google Chrome │ ╯
+╭─│would free about 9.8 GB (estimated).                                      │─╮
+│▸│                                                                          │ │
+│ │● Google Chrome: safe, a browser: it can reopen your tabs. Press x to     │n│
+│ │close it (canfit asks first).                                             │n│
+│ │                                                                          │ │
+│ │Symbols: ● calm · safe   ▲ strained · caution   ✗ critical · never closed │ │
+│ │                                                                          │n│
+│ │Colours only repeat the symbols. Memory, swap, CPU and app sizes are      │ │
+│ │measured; the pressure index and the memory freed by closing an app are   │ │
+│ │estimated.                                                                │ │
+╰ │Graphs: the last 121 readings, one every 1 s (up to 300).                 │ ╯
+╭─│Keys: ↑↓ or j/k move · g/G first/last · x close the selected app (canfit  │─╮
+│●│lists every process and asks; forcing asks again) · t theme · q quit ·    │t│
+│(│click or scroll the list.                                                 │ │
+│M│                                                                          │1│
+╰─╰─────────────────────────────────────────────────────── ? or Esc to close ╯ ╯
+ ↑↓ move  x close  ? explain  t theme  q quit                  every 1 s · dark

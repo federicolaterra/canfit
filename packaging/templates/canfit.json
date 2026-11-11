@@ -1,0 +1,25 @@
+{
+    "version": "{{VERSION}}",
+    "description": "The top for people running AI locally: can this model or app fit right now, and what should I close?",
+    "homepage": "https://github.com/federicolaterra/canfit",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/federicolaterra/canfit/releases/download/v{{VERSION}}/canfit-x86_64-pc-windows-msvc.zip",
+            "hash": "{{SHA256_WINDOWS_ZIP}}"
+        }
+    },
+    "bin": "canfit.exe",
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/federicolaterra/canfit/releases/download/v$version/canfit-x86_64-pc-windows-msvc.zip",
+                "hash": {
+                    "url": "$url.sha256",
+                    "regex": "^([a-fA-F0-9]{64})"
+                }
+            }
+        }
+    }
+}

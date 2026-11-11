@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<VirtualBox xmlns="http://www.virtualbox.org/" version="1.12-linux">
+  <Global>
+    <MachineRegistry>
+      <MachineEntry uuid="{00000000-0000-4000-8000-000000000003}" src="Registered/Registered.vbox"/>
+      <MachineEntry uuid="{00000000-0000-4000-8000-000000000004}" src="/nowhere/Moved/Moved.vbox"/>
+    </MachineRegistry>
+  </Global>
+</VirtualBox>

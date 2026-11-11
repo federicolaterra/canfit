@@ -1,0 +1,60 @@
+{
+  "description": "Kernel reports critical pressure, under 6 % of memory available, swap growing by 64 MB/s.",
+  "source": "synthesized from the recorded calm sample: kernel level 4 (critical), anonymous pages raised, swap used grows 64 MiB and Swapouts by 4096 pages within 1 s",
+  "expected_level": "critical",
+  "total_bytes": 17179869184,
+  "kernel_pressure_level": 4,
+  "iogpu_wired_limit_mb": 0,
+  "samples": [
+    {
+      "elapsed_ms": 0,
+      "vm": {
+        "page_size": 16384,
+        "free": 1500,
+        "active": 388175,
+        "inactive": 348484,
+        "speculative": 200,
+        "wired": 180000,
+        "purgeable": 1000,
+        "external": 40000,
+        "internal": 700000,
+        "compressor_occupied": 110000,
+        "compressor_stored": 500000,
+        "swapouts": 1024121
+      },
+      "swap": {
+        "total_bytes": 5368709120,
+        "used_bytes": 4294967296,
+        "free_bytes": 1073741824,
+        "encrypted": true
+      }
+    },
+    {
+      "elapsed_ms": 1000,
+      "vm": {
+        "page_size": 16384,
+        "free": 1500,
+        "active": 388175,
+        "inactive": 348484,
+        "speculative": 200,
+        "wired": 180000,
+        "purgeable": 1000,
+        "external": 40000,
+        "internal": 700000,
+        "compressor_occupied": 110000,
+        "compressor_stored": 500000,
+        "swapouts": 1028217
+      },
+      "swap": {
+        "total_bytes": 5368709120,
+        "used_bytes": 4362076160,
+        "free_bytes": 1006632960,
+        "encrypted": true
+      }
+    }
+  ],
+  "expected": {
+    "used_bytes": 16203776000,
+    "available_bytes": 976093184
+  }
+}

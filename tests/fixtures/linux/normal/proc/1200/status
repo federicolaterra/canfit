@@ -1,0 +1,6 @@
+Name:	gnome-shell
+State:	S
+PPid:	1000
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+VmRSS:	  380000 kB

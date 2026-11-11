@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Backend</key>
+	<string>QEMU</string>
+	<key>ConfigurationVersion</key>
+	<integer>4</integer>
+	<key>Drive</key>
+	<array>
+		<dict>
+			<key>ImageName</key>
+			<string>disk.qcow2</string>
+			<key>ImageType</key>
+			<string>Disk</string>
+		</dict>
+	</array>
+	<key>Information</key>
+	<dict>
+		<key>Icon</key>
+		<string>linux</string>
+		<key>Name</key>
+		<string>Ubuntu 24.04</string>
+		<key>UUID</key>
+		<string>00000000-0000-4000-8000-000000000000</string>
+	</dict>
+	<key>System</key>
+	<dict>
+		<key>Architecture</key>
+		<string>aarch64</string>
+		<key>CPUCount</key>
+		<integer>0</integer>
+		<key>MemorySize</key>
+		<integer>8192</integer>
+	</dict>
+</dict>
+</plist>

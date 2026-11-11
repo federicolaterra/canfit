@@ -1,0 +1,96 @@
+# Linux .deb and .rpm packages for a published release.
+#
+# The release itself (archives, installers, MSI, checksums) is built by
+# release.yml, which cargo-dist generates. Once that workflow succeeds for a version tag, this one
+# downloads the two static musl archives from the GitHub Release, verifies their checksums, wraps
+# the binaries into .deb and .rpm packages (metadata in Cargo.toml: package.metadata.deb and
+# package.metadata.generate-rpm), smoke-tests them and attaches them, with their .sha256 files, to
+# the same release. Nothing is rebuilt: the packages contain exactly the released binaries.
+#
+# It can also be run by hand for an existing release (Actions → Linux packages → Run workflow).
+name: Linux packages
+
+on:
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to package (for example v1.0.0)
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  packages:
+    # Only after a successful release run for a pushed tag (release.yml also runs `dist plan` on
+    # pull requests), or when started by hand.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.workflow_run.head_branch }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ env.TAG }}
+          persist-credentials: false
+
+      - name: Check the tag matches Cargo.toml
+        run: |
+          version=$(sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -n 1)
+          echo "Cargo.toml version: $version, tag: $TAG"
+          [ "v$version" = "$TAG" ] || { echo "tag $TAG does not match version $version"; exit 1; }
+
+      - name: Install packaging tools
+        run: |
+          rustup toolchain install
+          cargo install cargo-deb@3.8.0 --locked
+          cargo install cargo-generate-rpm@0.21.1 --locked
+
+      - name: Download and verify the released musl binaries
+        run: |
+          for target in x86_64-unknown-linux-musl aarch64-unknown-linux-musl; do
+            archive="canfit-$target.tar.xz"
+            gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir downloads \
+              --pattern "$archive" --pattern "$archive.sha256"
+            (cd downloads && sha256sum --check "$archive.sha256")
+            mkdir -p "target/$target/release"
+            tar -xJf "downloads/$archive" -C downloads
+            install -m 755 "downloads/canfit-$target/canfit" "target/$target/release/canfit"
+            file "target/$target/release/canfit"
+          done
+
+      - name: Build .deb and .rpm
+        run: |
+          mkdir -p packages
+          for target in x86_64-unknown-linux-musl aarch64-unknown-linux-musl; do
+            cargo deb --no-build --no-strip --target "$target" --output packages/
+            cargo generate-rpm --target "$target" --output packages/
+          done
+          (cd packages && for f in *.deb *.rpm; do sha256sum "$f" > "$f.sha256"; done)
+          ls -l packages
+
+      # This runner is a full Ubuntu VM: install the amd64 package, run it, remove it.
+      - name: Smoke-test the x86_64 packages
+        run: |
+          deb=$(ls packages/canfit_*_amd64.deb)
+          rpm=$(ls packages/canfit-*.x86_64.rpm)
+          dpkg-deb --info "$deb"
+          dpkg-deb --contents "$deb"
+          sudo apt-get install -y rpm
+          rpm -qip "$rpm"
+          rpm -qlp "$rpm"
+          sudo dpkg -i "$deb"
+          canfit --version
+          canfit --json | python3 -c "import json,sys; d=json.load(sys.stdin); assert d['schema']=='canfit.snapshot', d"
+          sudo dpkg -r canfit
+          ! command -v canfit
+
+      - name: Attach the packages to the release
+        run: gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber packages/*

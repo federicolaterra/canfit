@@ -1,0 +1,152 @@
+# Homebrew formula and Scoop manifest for a published release (ADR-029).
+#
+# Both live in this repository: Formula/canfit.rb (tapped with
+# `brew tap federicolaterra/canfit https://github.com/federicolaterra/canfit`) and
+# packaging/scoop/canfit.json (installed from its raw URL). They are rendered by
+# packaging/render.sh from packaging/release.env, which holds the released version and the
+# SHA-256 of the five archives.
+#
+# Once release.yml succeeds for a version tag, this workflow downloads the archives and their
+# .sha256 files from the GitHub Release, checks them, records the release in
+# packaging/release.env, re-renders both manifests and opens a pull request against the default
+# branch. `master` only accepts pull requests, so nothing is pushed to it directly. Until the pull
+# request is merged, `brew install` and `scoop install` keep installing the previous version.
+#
+# Pull requests opened with GITHUB_TOKEN do not start other workflows, so CI does not run on this
+# one by itself: close and reopen the pull request (or run CI on its branch with
+# `gh workflow run ci.yml --ref <branch>`) before merging. The repository setting
+# "Allow GitHub Actions to create and approve pull requests" must be on.
+#
+# It can also be run by hand for an existing release (Actions → Package manifests → Run
+# workflow). If this workflow cannot run, `packaging/render.sh VERSION CHECKSUM_DIR` does the same
+# locally (see packaging/README.md).
+name: Package manifests
+
+on:
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to point the manifests at (for example v1.0.0)
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: package-manifests
+  cancel-in-progress: false
+
+jobs:
+  manifests:
+    # Only after a successful release run for a pushed tag (release.yml also runs `dist plan` on
+    # pull requests), or when started by hand.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.workflow_run.head_branch }}
+      BASE: ${{ github.event.repository.default_branch }}
+    steps:
+      - name: Check the tag is a stable release
+        id: tag
+        run: |
+          case "$TAG" in
+            v[0-9]*.[0-9]*.[0-9]*-*)
+              echo "::notice::$TAG is a prerelease; the package manifests only follow stable releases."
+              echo "skip=true" >> "$GITHUB_OUTPUT" ;;
+            v[0-9]*.[0-9]*.[0-9]*)
+              echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+              echo "skip=false" >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "::error::\"$TAG\" is not a version tag like v1.0.0"
+              exit 1 ;;
+          esac
+
+      - uses: actions/checkout@v5
+        if: steps.tag.outputs.skip == 'false'
+        with:
+          ref: ${{ env.BASE }}
+          # Needed to push the pull request's branch (never the default branch).
+          persist-credentials: true
+
+      - name: Download and verify the released archives
+        if: steps.tag.outputs.skip == 'false'
+        run: |
+          mkdir -p "$RUNNER_TEMP/release"
+          for archive in canfit-aarch64-apple-darwin.tar.xz canfit-x86_64-apple-darwin.tar.xz \
+                         canfit-aarch64-unknown-linux-musl.tar.xz canfit-x86_64-unknown-linux-musl.tar.xz \
+                         canfit-x86_64-pc-windows-msvc.zip; do
+            gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir "$RUNNER_TEMP/release" \
+              --pattern "$archive" --pattern "$archive.sha256"
+          done
+          (cd "$RUNNER_TEMP/release" && sha256sum --check ./*.sha256)
+
+      - name: Skip a release older than the one already recorded
+        id: newer
+        if: steps.tag.outputs.skip == 'false'
+        run: |
+          current=$(sed -n 's/^VERSION=//p' packaging/release.env)
+          new=${{ steps.tag.outputs.version }}
+          newest=$(printf '%s\n%s\n' "$current" "$new" | sort -V | tail -n 1)
+          if [ "$new" != "$current" ] && [ "$newest" = "$current" ]; then
+            echo "::notice::packaging/release.env already records $current, newer than $new; nothing to do."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Render the manifests
+        if: steps.tag.outputs.skip == 'false' && steps.newer.outputs.skip == 'false'
+        run: |
+          packaging/render.sh "${{ steps.tag.outputs.version }}" "$RUNNER_TEMP/release"
+          packaging/render.sh --check
+          ruby -c Formula/canfit.rb
+          python3 -m json.tool packaging/scoop/canfit.json > /dev/null
+          git diff --stat
+
+      - name: Open the pull request
+        if: steps.tag.outputs.skip == 'false' && steps.newer.outputs.skip == 'false'
+        env:
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          if git diff --quiet; then
+            echo "::notice::The manifests already point at $VERSION; nothing to do."
+            exit 0
+          fi
+          branch="packaging/canfit-$VERSION"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add packaging/release.env Formula/canfit.rb packaging/scoop/canfit.json
+          git commit -m "chore: point Homebrew and Scoop manifests at canfit $VERSION"
+          # A rerun replaces the branch it pushed before.
+          git push --force origin "$branch"
+          if [ -n "$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$branch" --state open --json number --jq '.[].number')" ]; then
+            echo "::notice::A pull request for $branch is already open; its branch was updated."
+            exit 0
+          fi
+          cat > "$RUNNER_TEMP/body.md" <<EOF
+          Points the in-repository package manifests at the published release **$TAG**:
+
+          - \`packaging/release.env\`: version $VERSION and the SHA-256 of the five archives, taken
+            from the release's \`.sha256\` files and checked against the downloaded archives.
+          - \`Formula/canfit.rb\` (Homebrew) and \`packaging/scoop/canfit.json\` (Scoop), re-rendered
+            by \`packaging/render.sh\`.
+
+          Until this is merged, \`brew install federicolaterra/canfit/canfit\` and the Scoop raw URL
+          install the previous version.
+
+          **CI has not run:** pull requests opened by GitHub Actions don't start workflows. Close and
+          reopen this pull request (or run \`gh workflow run ci.yml --ref $branch\`), wait for CI,
+          then squash-merge.
+          EOF
+          gh pr create --repo "$GITHUB_REPOSITORY" --base "$BASE" --head "$branch" \
+            --title "chore: point Homebrew and Scoop manifests at canfit $VERSION" \
+            --body-file "$RUNNER_TEMP/body.md"

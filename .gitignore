@@ -1,0 +1,16 @@
+# Build output.
+/target/
+
+# macOS metadata.
+.DS_Store
+
+# Maintainer-only private repository, checked out separately inside this workspace.
+/_internal/
+
+# Coding-agent guidance generated from _internal/AGENTS.md and _internal/CLAUDE.md
+# by _internal/scripts/refresh-public-agents.sh. Edit the sources, never these copies.
+/AGENTS.md
+/CLAUDE.md
+
+# Personal Claude Code settings.
+/.claude/settings.local.json

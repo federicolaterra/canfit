@@ -1,0 +1,146 @@
+# canfit app profiles (ADR-020). One [[app]] block per app; first matching name wins.
+#
+#   name      the name canfit shows; also matched, ignoring case
+#   aliases   other names people type
+#   os        the OSes the app runs on (default: all three)
+#   readers   ordered config readers; the first that reads a value wins. Kinds:
+#             docker_desktop, utm, parallels, vmware, virtualbox, jetbrains, jvm_options, json
+#   macos / windows / linux
+#             how to find the running app: `bundles` (macOS .app names), `names` (process or app
+#             group names, `.exe` optional), `shared` (shared processes that may hold the app's
+#             memory but can't be attributed to it; only noted)
+#
+# Paths in readers use {home}, {config} (per-user settings folder) and {data} (per-user data
+# folder), with "/" as separator on every OS. See docs/open-source/apps.md to add a profile.
+
+schema_version = 1
+
+# --- Containers --------------------------------------------------------------------------------
+
+[[app]]
+name = "Docker Desktop"
+aliases = ["Docker", "Docker for Mac", "Docker for Windows"]
+readers = [{ kind = "docker_desktop" }]
+macos = { bundles = ["Docker"], shared = ["com.apple.Virtualization.VirtualMachine"] }
+windows = { names = ["Docker Desktop", "com.docker.backend", "vmmemWSL", "vmmem"] }
+linux = { names = ["docker-desktop", "com.docker.backend"] }
+
+# --- Virtual machines --------------------------------------------------------------------------
+
+[[app]]
+name = "UTM"
+os = ["macos"]
+readers = [{ kind = "utm" }]
+macos = { bundles = ["UTM"], shared = ["com.apple.Virtualization.VirtualMachine"] }
+
+[[app]]
+name = "Parallels Desktop"
+aliases = ["Parallels"]
+os = ["macos"]
+readers = [{ kind = "parallels" }]
+macos = { bundles = ["Parallels Desktop"], names = ["prl_vm_app", "prl_client_app"] }
+
+[[app]]
+name = "VMware Fusion"
+aliases = ["VMware", "Fusion"]
+os = ["macos"]
+readers = [{ kind = "vmware" }]
+macos = { bundles = ["VMware Fusion"], names = ["vmware-vmx"] }
+
+[[app]]
+name = "VMware Workstation"
+aliases = ["VMware", "VMware Workstation Pro", "VMware Player"]
+os = ["windows", "linux"]
+readers = [{ kind = "vmware" }]
+windows = { names = ["vmware", "vmware-vmx", "vmplayer"] }
+linux = { names = ["vmware", "vmware-vmx", "vmplayer"] }
+
+[[app]]
+name = "VirtualBox"
+aliases = ["Oracle VirtualBox", "VBox"]
+readers = [{ kind = "virtualbox" }]
+macos = { bundles = ["VirtualBox", "VirtualBoxVM"], names = ["VBoxHeadless", "VBoxSVC"] }
+windows = { names = ["VirtualBox", "VirtualBoxVM", "VBoxHeadless", "VBoxSVC"] }
+linux = { names = ["VirtualBox", "VirtualBoxVM", "VBoxHeadless", "VBoxSVC"] }
+
+# --- JetBrains IDEs (JVM) ----------------------------------------------------------------------
+
+[[app]]
+name = "IntelliJ IDEA"
+aliases = ["IntelliJ", "IDEA", "IntelliJ IDEA Ultimate", "IntelliJ IDEA Community", "IntelliJ IDEA CE"]
+readers = [{ kind = "jetbrains", install_names = ["IntelliJ IDEA", "intellij-idea"], data_dirs = ["IntelliJIdea", "IdeaIC"], launcher = "idea" }]
+macos = { bundles = ["IntelliJ IDEA", "IntelliJ IDEA CE", "IntelliJ IDEA Ultimate"] }
+windows = { names = ["idea64", "idea"] }
+linux = { names = ["idea", "idea.sh"] }
+
+[[app]]
+name = "PyCharm"
+aliases = ["PyCharm Professional", "PyCharm Community", "PyCharm CE"]
+readers = [{ kind = "jetbrains", install_names = ["PyCharm"], data_dirs = ["PyCharm", "PyCharmCE"], launcher = "pycharm" }]
+macos = { bundles = ["PyCharm", "PyCharm CE", "PyCharm Professional Edition"] }
+windows = { names = ["pycharm64", "pycharm"] }
+linux = { names = ["pycharm", "pycharm.sh"] }
+
+[[app]]
+name = "WebStorm"
+readers = [{ kind = "jetbrains", install_names = ["WebStorm"], data_dirs = ["WebStorm"], launcher = "webstorm" }]
+macos = { bundles = ["WebStorm"] }
+windows = { names = ["webstorm64", "webstorm"] }
+linux = { names = ["webstorm", "webstorm.sh"] }
+
+[[app]]
+name = "PhpStorm"
+readers = [{ kind = "jetbrains", install_names = ["PhpStorm"], data_dirs = ["PhpStorm"], launcher = "phpstorm" }]
+macos = { bundles = ["PhpStorm"] }
+windows = { names = ["phpstorm64", "phpstorm"] }
+linux = { names = ["phpstorm", "phpstorm.sh"] }
+
+[[app]]
+name = "CLion"
+readers = [{ kind = "jetbrains", install_names = ["CLion"], data_dirs = ["CLion"], launcher = "clion" }]
+macos = { bundles = ["CLion"] }
+windows = { names = ["clion64", "clion"] }
+linux = { names = ["clion", "clion.sh"] }
+
+[[app]]
+name = "GoLand"
+readers = [{ kind = "jetbrains", install_names = ["GoLand"], data_dirs = ["GoLand"], launcher = "goland" }]
+macos = { bundles = ["GoLand"] }
+windows = { names = ["goland64", "goland"] }
+linux = { names = ["goland", "goland.sh"] }
+
+[[app]]
+name = "Rider"
+aliases = ["JetBrains Rider"]
+readers = [{ kind = "jetbrains", install_names = ["Rider", "JetBrains Rider"], data_dirs = ["Rider"], launcher = "rider" }]
+macos = { bundles = ["Rider"] }
+windows = { names = ["rider64", "rider"] }
+linux = { names = ["rider", "rider.sh"] }
+
+[[app]]
+name = "RubyMine"
+readers = [{ kind = "jetbrains", install_names = ["RubyMine"], data_dirs = ["RubyMine"], launcher = "rubymine" }]
+macos = { bundles = ["RubyMine"] }
+windows = { names = ["rubymine64", "rubymine"] }
+linux = { names = ["rubymine", "rubymine.sh"] }
+
+[[app]]
+name = "DataGrip"
+readers = [{ kind = "jetbrains", install_names = ["DataGrip"], data_dirs = ["DataGrip"], launcher = "datagrip" }]
+macos = { bundles = ["DataGrip"] }
+windows = { names = ["datagrip64", "datagrip"] }
+linux = { names = ["datagrip", "datagrip.sh"] }
+
+[[app]]
+name = "RustRover"
+readers = [{ kind = "jetbrains", install_names = ["RustRover"], data_dirs = ["RustRover"], launcher = "rustrover" }]
+macos = { bundles = ["RustRover"] }
+windows = { names = ["rustrover64", "rustrover"] }
+linux = { names = ["rustrover", "rustrover.sh"] }
+
+[[app]]
+name = "Android Studio"
+readers = [{ kind = "jetbrains", install_names = ["Android Studio", "android-studio"], data_dirs = ["AndroidStudio"], launcher = "studio", vendor = "Google" }]
+macos = { bundles = ["Android Studio"] }
+windows = { names = ["studio64", "studio"] }
+linux = { names = ["studio", "studio.sh"] }

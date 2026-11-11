@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ParallelsVirtualMachine schemaVersion="1.0" dyn_lists="VirtualAppliance 0">
+   <Identification dyn_lists="">
+      <VmUuid>{00000000-0000-4000-8000-000000000002}</VmUuid>
+      <VmName>Windows 11</VmName>
+   </Identification>
+   <Hardware dyn_lists="Fdd 0 CdRom 1 Hdd 1">
+      <Cpu dyn_lists=""><Number>4</Number></Cpu>
+      <Memory dyn_lists="">
+         <RAM>8192</RAM>
+         <RamAutoSizeEnabled>0</RamAutoSizeEnabled>
+      </Memory>
+   </Hardware>
+</ParallelsVirtualMachine>

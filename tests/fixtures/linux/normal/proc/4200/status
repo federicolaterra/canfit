@@ -1,0 +1,6 @@
+Name:	llama-server
+State:	S
+PPid:	4000
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+VmRSS:	 5800000 kB

@@ -1,0 +1,130 @@
+[package]
+name = "canfit"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.99"
+description = "The top for people running AI locally: can this model or app fit right now, and what should I close?"
+license = "MIT"
+repository = "https://github.com/federicolaterra/canfit"
+homepage = "https://github.com/federicolaterra/canfit"
+documentation = "https://github.com/federicolaterra/canfit/blob/master/docs/open-source/usage.md"
+authors = ["Federico La Terra <info@federicolaterra.com>"]
+readme = "README.md"
+keywords = ["memory", "gguf", "llm", "monitor", "tui"]
+categories = ["command-line-utilities"]
+# Not published to a package registry (ADR-028): Rust users install from the repository with
+# `cargo install --git https://github.com/federicolaterra/canfit --tag vX.Y.Z --locked`.
+# This also stops an accidental `cargo publish`.
+publish = false
+# What a packaged crate would contain (`cargo package`): no CI, packaging or test fixtures.
+include = [
+  "/src/**",
+  "/Cargo.toml",
+  "/Cargo.lock",
+  "/README.md",
+  "/LICENSE",
+  "/docs/open-source/THIRD_PARTY_NOTICES.md",
+]
+
+[dependencies]
+chrono = { version = "0.4.45", default-features = false, features = ["clock", "std"] }
+clap = { version = "4", features = ["derive"] }
+directories = "6.0.0"
+quick-xml = { version = "0.42", default-features = false }
+ratatui = { version = "0.30.2", default-features = false, features = ["crossterm_0_29", "layout-cache"] }
+rusqlite = { version = "0.41.1", default-features = false, features = ["bundled"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+sysinfo = { version = "0.40.1", default-features = false, features = ["system"] }
+toml = { version = "1.2.1", default-features = false, features = ["parse", "serde"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+libc = "0.2.191"
+mach2 = "0.7.0"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2.191"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = { version = "0.62.2", features = [
+  "Win32_Foundation",
+  "Win32_Security",
+  "Win32_Security_Authorization",
+  "Win32_System_Console",
+  "Win32_System_Diagnostics_ToolHelp",
+  "Win32_System_JobObjects",
+  "Win32_System_LibraryLoader",
+  "Win32_System_Memory",
+  "Win32_System_Performance",
+  "Win32_System_ProcessStatus",
+  "Win32_System_SystemInformation",
+  "Win32_System_Threading",
+  "Win32_UI_WindowsAndMessaging",
+] }
+
+# The watch tests are their own harness: the same binary is the helper program they watch.
+[[test]]
+name = "cli_watch"
+harness = false
+
+[dev-dependencies]
+insta = "1.49.0"
+
+# The Windows closing test opens a window of its own.
+[target.'cfg(target_os = "windows")'.dev-dependencies]
+windows = { version = "0.62.2", features = ["Win32_Graphics_Gdi"] }
+
+# SQLite is C code compiled by the build script; optimise it in debug and test builds too, so the
+# history tests stay fast.
+[profile.dev.package.libsqlite3-sys]
+opt-level = 3
+
+# Release artifacts (cargo-dist) use exactly the release profile: full LTO, one codegen unit,
+# stripped.
+[profile.dist]
+inherits = "release"
+
+# Linux packages built from the static musl binaries by .github/workflows/linux-packages.yml
+# (`cargo deb --no-build`, `cargo generate-rpm`). Both install /usr/bin/canfit and need root.
+[package.metadata.deb]
+maintainer = "Federico La Terra <info@federicolaterra.com>"
+copyright = "2026 Federico La Terra <info@federicolaterra.com>"
+license-file = ["LICENSE", "0"]
+section = "utils"
+priority = "optional"
+# No `depends`: cargo-deb's default ($auto) finds no shared libraries in the static binary.
+extended-description = "canfit is a cross-platform top for people running AI locally. Besides RAM, CPU and pressure it answers: can I launch this model or app right now? If not, what should I close? It checks GGUF models and apps (from their declared settings or the memory canfit measured them use). A single static binary with no runtime dependencies."
+assets = [
+  ["target/release/canfit", "usr/bin/", "755"],
+  ["README.md", "usr/share/doc/canfit/README.md", "644"],
+  ["LICENSE", "usr/share/doc/canfit/LICENSE", "644"],
+  ["docs/open-source/THIRD_PARTY_NOTICES.md", "usr/share/doc/canfit/THIRD_PARTY_NOTICES.md", "644"],
+]
+
+[package.metadata.generate-rpm]
+# cargo-generate-rpm 0.21 uses the summary as the package description too.
+summary = "The top for people running AI locally: can this model or app fit right now?"
+license = "MIT"
+assets = [
+  { source = "target/release/canfit", dest = "/usr/bin/canfit", mode = "755" },
+  { source = "README.md", dest = "/usr/share/doc/canfit/README.md", mode = "644", doc = true },
+  { source = "LICENSE", dest = "/usr/share/licenses/canfit/LICENSE", mode = "644", doc = true },
+  { source = "docs/open-source/THIRD_PARTY_NOTICES.md", dest = "/usr/share/doc/canfit/THIRD_PARTY_NOTICES.md", mode = "644", doc = true },
+]
+# Static binary: no shared-library requirements to detect.
+auto-req = "no"
+
+# cargo-dist skips packages with `publish = false` unless told otherwise.
+[package.metadata.dist]
+dist = true
+
+[package.metadata.wix]
+upgrade-guid = "BBA6B9A3-18C6-43EA-B293-75FD5DC34E1E"
+path-guid = "1DF47349-A89C-40D1-930C-4B74F65CCC4A"
+license = false
+eula = false

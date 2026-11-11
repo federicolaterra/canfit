@@ -1,0 +1,60 @@
+{
+  "description": "Enough memory is available, but the compressor holds 4.3 GB (27 % of memory).",
+  "source": "synthesized from the recorded calm sample: anonymous pages and compressor occupancy adjusted; swap unchanged",
+  "expected_level": "strained",
+  "total_bytes": 17179869184,
+  "kernel_pressure_level": 1,
+  "iogpu_wired_limit_mb": 0,
+  "samples": [
+    {
+      "elapsed_ms": 0,
+      "vm": {
+        "page_size": 16384,
+        "free": 10000,
+        "active": 388175,
+        "inactive": 348484,
+        "speculative": 3000,
+        "wired": 168455,
+        "purgeable": 5000,
+        "external": 200000,
+        "internal": 330000,
+        "compressor_occupied": 280000,
+        "compressor_stored": 840000,
+        "swapouts": 1024121
+      },
+      "swap": {
+        "total_bytes": 5368709120,
+        "used_bytes": 4336847421,
+        "free_bytes": 1031861699,
+        "encrypted": true
+      }
+    },
+    {
+      "elapsed_ms": 1000,
+      "vm": {
+        "page_size": 16384,
+        "free": 10000,
+        "active": 388175,
+        "inactive": 348484,
+        "speculative": 3000,
+        "wired": 168455,
+        "purgeable": 5000,
+        "external": 200000,
+        "internal": 330000,
+        "compressor_occupied": 280000,
+        "compressor_stored": 840000,
+        "swapouts": 1024121
+      },
+      "swap": {
+        "total_bytes": 5368709120,
+        "used_bytes": 4336847421,
+        "free_bytes": 1031861699,
+        "encrypted": true
+      }
+    }
+  ],
+  "expected": {
+    "used_bytes": 12672286720,
+    "available_bytes": 4507582464
+  }
+}

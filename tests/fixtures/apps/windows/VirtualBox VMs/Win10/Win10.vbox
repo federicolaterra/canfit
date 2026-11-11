@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<VirtualBox xmlns="http://www.virtualbox.org/" version="1.19-macosx">
+  <Machine uuid="{00000000-0000-4000-8000-000000000001}" name="Win10" OSType="Debian_64">
+    <Hardware>
+      <CPU count="2"/>
+      <Memory RAMSize="4096"/>
+    </Hardware>
+  </Machine>
+</VirtualBox>

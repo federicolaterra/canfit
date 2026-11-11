@@ -1,0 +1,69 @@
+name: New app profile or catalog entry
+description: Propose an app canfit should know — from its settings (profile) or a measured value (catalog).
+title: "[App]: "
+labels: ["app-profile"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        canfit answers "is there room for this app?" from, in order: the memory the app's own
+        settings declare (a **profile**), what canfit measured it use on your machine (history or
+        `canfit watch`), and a small built-in **catalog** of common apps. See
+        [Apps](https://github.com/federicolaterra/canfit/blob/master/docs/open-source/apps.md) for
+        the formats and the review rules. Small, well-described proposals are often tagged
+        `good first issue`.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What are you proposing?
+      options:
+        - A profile — the app declares its memory in a settings file (VM, container runtime, JVM app…)
+        - A catalog entry — a common app without such a setting, with measured values
+        - A correction to an existing profile or catalog entry
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: App name and version
+      description: The name people type (`canfit "App Name"`) and the version you checked.
+      placeholder: "Example VM Manager 3.2"
+    validations:
+      required: true
+  - type: checkboxes
+    id: os
+    attributes:
+      label: Operating systems you checked
+      options:
+        - label: macOS
+        - label: Windows
+        - label: Linux
+  - type: textarea
+    id: settings
+    attributes:
+      label: Where the app declares its memory (profiles)
+      description: >
+        The settings file path on each OS, the key or line that holds the memory and its unit, and
+        a short excerpt with personal data removed. Leave empty for a catalog entry.
+      render: text
+  - type: textarea
+    id: measurement
+    attributes:
+      label: Measured memory (catalog entries)
+      description: >
+        Output of `canfit history --apps` (high confidence: at least an hour over two days with the
+        monitor open) or the summary of `canfit watch -- <app>`, plus the workload (for example
+        "12 tabs", "one project open") and the machine. canfit lists only the app's memory; review
+        the output before pasting it.
+      render: text
+  - type: textarea
+    id: processes
+    attributes:
+      label: Process or bundle names
+      description: How the running app appears in canfit's monitor on each OS (for example `Slack`, `slack.exe`).
+  - type: checkboxes
+    id: pr
+    attributes:
+      label: Contribution
+      options:
+        - label: I would like to open the pull request myself (see CONTRIBUTING.md, "Good first issues").

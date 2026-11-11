@@ -1,0 +1,44 @@
+ ✗ Memory is critical: macOS reports memory pressure as critical; only 931 MB of 16.0 GB memory is available. Google Chrome is using 9.8 GB.
+╭─ ✗ Memory ──────────────────────╮╭─ ▲ Swap ────────────────────────╮╭─ ● CPU ─────────────────────────╮╭─ ✗ Pressure ────────────────────╮
+│931 MB available                 ││growing 64.0 MB/s                ││23% of 10 cores                  ││critical · 90/100                │
+│██████████████████████████░░  94%││███████████████████████░░░░░  81%││██████░░░░░░░░░░░░░░░░░░░░░░  23%││█████████████████████████░░░  90%│
+│          ▁▁▁                 ▁▁▁││▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃││                                 ││     ▁▁▂▂▃▃▄▄            ▁▁▂▂▃▃▄▄│
+│▆▆▆▇▇▇▇██████▄▄▄▄▅▅▅▆▆▆▇▇▇▇██████││█████████████████████████████████││       ▁▁▂▂▃▃              ▁▁▂▂▃▃││▆▆▇██████████▂▃▃▄▄▅▅▆▆▇██████████│
+│█████████████████████████████████││█████████████████████████████████││▅▆▆▇▇████████▂▂▃▃▄▄▅▅▆▆▇▇████████││█████████████████████████████████│
+╰─────────────────────── measured ╯╰─────────────────────── measured ╯╰─────────────────────── measured ╯╰────────────────────── estimated ╯
+╭─ Apps · largest first ───────────────────────────────────────────────────────────╮╭─ Why? ───────────────────────────────────────────────╮
+│▸ ● Google Chrome                                    9.8 GB   2 processes  safe   ││● Google Chrome: safe, a browser: it can reopen your  │
+│  ▲ Ollama                                           4.0 GB     1 process  caution││tabs. Press x to close it (canfit asks first).        │
+│  ▲ Visual Studio Code                               1.5 GB     1 process  caution││                                                      │
+│  ● Slack                                           1000 MB     1 process  safe   ││Memory is critical because macOS reports memory       │
+│  ✗ WindowServer                                     900 MB     1 process  never  ││pressure as critical; only 931 MB of 16.0 GB memory is│
+│  ▲ Some Tool                                        400 MB     1 process  caution││available. The biggest memory users are Google Chrome │
+│  ● Spotify                                          300 MB     1 process  safe   ││(9.8 GB), Ollama (4.0 GB) and Visual Studio Code (1.5 │
+│  ✗ Terminal                                         300 MB     1 process  never  ││GB) (measured). The system is also compressing 7.6 GB │
+│  ✗ Finder                                           190 MB     1 process  never  ││of app memory to make room. Swap is growing, which    │
+│  ✗ loginwindow                                      120 MB     1 process  never  ││slows everything down. Closing Google Chrome would    │
+│  ✗ Dock                                              90 MB     1 process  never  ││free about 9.8 GB (estimated).                        │
+│  ✗ launchd                                           30 MB     1 process  never  ││                                                      │
+│  ✗ canfit                                            10 MB     1 process  never  ││                                                      │
+│  ✗ zsh                                                5 MB     1 process  never  ││                                                      │
+│  ✗ login                                              2 MB     1 process  never  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+│                                                                                  ││                                                      │
+╰ 1/15 ───────────────────────────────────────────── measured · physical footprint ╯╰──────────────────────────────────────────────────────╯
+ ↑↓ move  x close  ? explain  t theme  q quit                                                                              every 1 s · dark

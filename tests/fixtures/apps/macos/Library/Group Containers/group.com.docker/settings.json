@@ -1,0 +1,9 @@
+{
+  "settingsVersion": 25,
+  "memoryMiB": 10240,
+  "swapMiB": 3072,
+  "cpus": 7,
+  "diskSizeMiB": 61035,
+  "useVirtualizationFramework": true,
+  "useVirtualizationFrameworkRosetta": true
+}

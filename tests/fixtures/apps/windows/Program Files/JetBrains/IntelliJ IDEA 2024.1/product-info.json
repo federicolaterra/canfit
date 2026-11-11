@@ -1,0 +1,14 @@
+{
+ "name": "IntelliJ IDEA",
+ "version": "2024.1",
+ "productCode": "IU",
+ "dataDirectoryName": "IntelliJIdea2024.1",
+ "launch": [
+  {
+   "os": "Windows",
+   "arch": "amd64",
+   "launcherPath": "bin/idea64.exe",
+   "vmOptionsFilePath": "bin/idea64.exe.vmoptions"
+  }
+ ]
+}

@@ -1,0 +1,55 @@
+[workspace]
+members = ["cargo:."]
+
+# Release pipeline (cargo-dist). `dist generate` turns this file into
+# .github/workflows/release.yml and wix/main.wxs; never edit those by hand. See
+# docs/open-source/development.md#releases.
+[dist]
+# The dist version CI installs (Cargo.toml SemVer syntax).
+cargo-dist-version = "0.34.0"
+ci = "github"
+hosting = "github"
+# One self-contained binary per target. Linux ships only static musl builds, which run on any
+# distribution (ADR-001, ADR-017); there are no glibc builds.
+targets = [
+  "aarch64-apple-darwin",
+  "x86_64-apple-darwin",
+  "x86_64-pc-windows-msvc",
+  "x86_64-unknown-linux-musl",
+  "aarch64-unknown-linux-musl",
+]
+# No "homebrew" installer: the formula lives in this repository (Formula/canfit.rb), rendered by
+# packaging/render.sh and updated by the "Package manifests" workflow (ADR-028, ADR-029).
+installers = ["shell", "powershell", "msi"]
+# The shell and PowerShell installers put canfit in a per-user folder (no admin rights), not in
+# ~/.cargo/bin, so a script install is never mistaken for `cargo install`.
+install-path = ["$XDG_BIN_HOME/", "$XDG_DATA_HOME/../bin", "~/.local/bin"]
+# `canfit update` hands over to this small companion updater (axoupdater), installed next to
+# canfit by the shell and PowerShell installers only. Package-manager installs update through
+# their package manager.
+install-updater = true
+# The PowerShell installer and the MSI must not need the Visual C++ runtime (ADR-016).
+msvc-crt-static = true
+# SHA-256 checksum next to every artifact, plus one combined `sha256.sum`.
+checksum = "sha256"
+# Once this release workflow succeeds (workflow_run), .github/workflows/linux-packages.yml builds
+# the .deb and .rpm and .github/workflows/package-manifests.yml opens the Homebrew/Scoop manifest
+# pull request. They are not dist custom jobs: dist 0.34 renders custom job references as an
+# invalid `uses: $/...` path.
+# Signed build provenance for every release file (`gh attestation verify`).
+github-attestations = true
+# Tags look like v1.0.0. Pull requests run `dist plan` only.
+pr-run-mode = "plan"
+# The generated workflow is checked in; dist refuses to release when it is stale.
+allow-dirty = []
+# Extra files in every archive (dist already adds README and LICENSE).
+include = ["docs/open-source/THIRD_PARTY_NOTICES.md"]
+
+# Bundled SQLite is C code: the musl builds need a musl C compiler (cc-rs picks musl-gcc).
+[dist.dependencies.apt]
+musl-tools = "*"
+
+# Linux ARM64 builds natively on GitHub's ARM runner, as in CI, instead of cross-compiling.
+[dist.github-custom-runners]
+aarch64-unknown-linux-musl = "ubuntu-24.04-arm"
+x86_64-unknown-linux-musl = "ubuntu-22.04"

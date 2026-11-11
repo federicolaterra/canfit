@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100" width="300" height="100" role="img" aria-labelledby="title">
+  <title id="title">canfit</title>
+  <style>
+    .canfit-logo {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 5rem;
+      font-weight: 700;
+      fill: #17221F;
+    }
+    @media (prefers-color-scheme: dark) {
+      .canfit-logo { fill: #D1D7E0; }
+    }
+  </style>
+  <text class="canfit-logo" x="150" y="78" text-anchor="middle">canfit</text>
+</svg>

@@ -1,0 +1,118 @@
+# End-to-end smoke test of a release build on every platform canfit ships for.
+#
+# Started by hand (Actions → Smoke → Run workflow) before a release, or after a risky change. It
+# builds the release binary for each target, then runs .github/smoke/smoke.sh against it:
+# --version/--help, usage errors (64), snapshot and --json, NO_COLOR/ASCII/themes, a fit check on
+# tiny and huge synthetic GGUF files (exit 0/1/2), unreadable files and unknown apps (3), models,
+# free, an app from a declared settings file, watch (exit codes, stdout passthrough, a 300 MB
+# allocation), history, the history opt-outs (--no-history, CANFIT_NO_HISTORY=1, watch --no-save
+# leave an empty data directory empty) and update. canfit never closes anything here: stdin is
+# never a terminal.
+# Complements ci.yml (unit and integration tests) and the manual VM test plan; it does not
+# replace the VM rows that need a real desktop (monitor keys, closing real apps, installers).
+name: Smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, tag or commit to test
+        required: false
+        default: master
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: smoke (${{ matrix.target }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          # Intel macOS binary, run under Rosetta 2 on the Apple silicon runner.
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            run_prefix: arch -x86_64
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            musl: true
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-24.04-arm
+            musl: true
+    runs-on: ${{ matrix.os }}
+    # Default is 6 hours; a normal run takes 5-20 minutes (Windows release builds are the slowest).
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref }}
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install toolchain
+        run: |
+          rustup toolchain install
+          rustup target add ${{ matrix.target }}
+
+      - name: Install musl C compiler
+        if: matrix.musl
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+          target_env=$(echo "${{ matrix.target }}" | tr '-' '_')
+          echo "CC_${target_env}=musl-gcc" >> "$GITHUB_ENV"
+
+      - name: Rosetta 2
+        if: matrix.run_prefix == 'arch -x86_64'
+        run: /usr/sbin/softwareupdate --install-rosetta --agree-to-license || true
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: smoke-${{ matrix.target }}
+
+      - name: Release build
+        run: cargo build --release --locked --target ${{ matrix.target }}
+
+      - name: Binary facts
+        run: |
+          bin=target/${{ matrix.target }}/release/canfit
+          [ -f "$bin.exe" ] && bin="$bin.exe"
+          ls -l "$bin"
+          file "$bin" || true
+          case "${{ matrix.target }}" in
+            *linux-musl) file "$bin" | grep -Eq 'statically linked|static-pie linked' ;;
+            *apple-darwin) otool -L "$bin" ;;
+          esac
+
+      - name: Smoke test
+        # Each command already has its own timeout in smoke.sh; this is the backstop.
+        timeout-minutes: 20
+        run: |
+          bin="$PWD/target/${{ matrix.target }}/release/canfit"
+          [ -f "$bin.exe" ] && bin="$bin.exe"
+          if [ -n "${{ matrix.run_prefix }}" ]; then
+            printf '#!/bin/sh\nexec %s "%s" "$@"\n' "${{ matrix.run_prefix }}" "$bin" > "$RUNNER_TEMP/canfit"
+            chmod +x "$RUNNER_TEMP/canfit"
+            bin="$RUNNER_TEMP/canfit"
+          fi
+          bash .github/smoke/smoke.sh "$bin" "$RUNNER_TEMP/canfit-smoke" 2>&1 | tee smoke-${{ matrix.target }}.log
+          exit "${PIPESTATUS[0]}"
+
+      - name: Upload the log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-${{ matrix.target }}
+          path: smoke-${{ matrix.target }}.log
+          retention-days: 14

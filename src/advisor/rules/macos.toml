@@ -1,0 +1,130 @@
+# canfit process classification rules for macOS (ADR-013).
+#
+# Each process is checked against the rules in file order; the first rule that matches decides
+# its class. An application group takes the most restrictive class of its processes
+# (never > caution > safe). Processes no rule matches are "caution", never "safe".
+#
+# Checks hard-coded in canfit come before these rules and cannot be overridden here: canfit
+# itself, every ancestor of canfit (the current terminal and shell), processes of other users
+# (root and system daemons) and anything in the user's protected list are always "never".
+#
+# Matchers (all case-insensitive, any one is enough):
+#   names          exact process name
+#   name_prefixes  start of the process name
+#   bundles        display name of the outermost .app bundle (without ".app")
+#   path_prefixes  start of the executable path
+#
+# Order matters: specific "caution" exceptions for system-provided processes come before the
+# broad "never" path rules.
+
+schema_version = 1
+
+# --- never: the desktop session itself -----------------------------------------------------------
+
+[[rule]]
+class = "never"
+reason = "part of macOS: closing it would break your session"
+names = [
+  "kernel_task", "launchd", "WindowServer", "loginwindow", "Dock", "Finder", "SystemUIServer",
+  "ControlCenter", "NotificationCenter", "WindowManager", "Spotlight", "coreaudiod", "cfprefsd",
+  "distnoted", "mds", "mds_stores", "mdworker", "mdworker_shared", "TextInputMenuAgent",
+  "universalaccessd", "AccessibilityUIServer", "CoreServicesUIAgent", "UserEventAgent",
+  "secd", "trustd", "securityd", "sharingd", "usernoted", "talagent", "lsd", "pboard",
+]
+
+[[rule]]
+class = "never"
+reason = "a terminal session: closing it ends the commands running in it"
+names = [
+  "zsh", "bash", "sh", "fish", "dash", "ksh", "tcsh", "csh", "nu", "login", "tmux", "screen",
+  "zellij", "ssh", "sshd", "mosh-server", "sudo",
+]
+
+[[rule]]
+class = "never"
+reason = "canfit itself"
+names = ["canfit"]
+
+# --- caution: system-provided processes that are safe enough to close ---------------------------
+
+[[rule]]
+class = "caution"
+reason = "web pages in Safari and other apps reload; unsent form input may be lost"
+name_prefixes = ["com.apple.WebKit."]
+
+[[rule]]
+class = "caution"
+reason = "a virtual machine: closing it stops it like pulling the plug"
+names = ["com.apple.Virtualization.VirtualMachine"]
+
+# --- never: everything else that ships with macOS -----------------------------------------------
+
+[[rule]]
+class = "never"
+reason = "part of macOS"
+path_prefixes = [
+  "/System/Library/", "/System/Volumes/Preboot/Cryptexes/OS/", "/System/iOSSupport/",
+  "/usr/bin/", "/usr/sbin/", "/usr/libexec/", "/usr/lib/", "/bin/", "/sbin/", "/Library/Apple/",
+  "/Library/PrivilegedHelperTools/",
+]
+
+# --- caution: work you may lose -----------------------------------------------------------------
+
+[[rule]]
+class = "caution"
+reason = "a model server: the loaded model is unloaded and running requests stop"
+names = [
+  "llama-server", "llama-cli", "llama-cpp-server", "ollama", "ollama_llama_server", "mlx_lm.server",
+  "lms", "koboldcpp", "vllm", "whisper-server",
+]
+bundles = ["Ollama", "LM Studio", "Jan", "GPT4All", "Msty", "AnythingLLM"]
+
+[[rule]]
+class = "caution"
+reason = "containers and virtual machines stop; their unsaved state may be lost"
+names = ["com.docker.backend", "com.docker.hyperkit", "com.docker.virtualization", "qemu-system-aarch64", "qemu-system-x86_64", "colima", "limactl", "vfkit"]
+bundles = ["Docker", "Docker Desktop", "OrbStack", "UTM", "Parallels Desktop", "VMware Fusion", "VirtualBox", "Podman Desktop", "Rancher Desktop"]
+
+[[rule]]
+class = "caution"
+reason = "an editor or IDE: you may lose unsaved work"
+bundles = [
+  "Visual Studio Code", "Visual Studio Code - Insiders", "Cursor", "Windsurf", "Zed", "Xcode",
+  "Android Studio", "IntelliJ IDEA", "IntelliJ IDEA CE", "PyCharm", "PyCharm CE", "WebStorm",
+  "GoLand", "CLion", "RustRover", "Rider", "DataGrip", "Sublime Text", "Nova", "BBEdit",
+  "TextEdit", "Pages", "Numbers", "Keynote", "Microsoft Word", "Microsoft Excel",
+  "Microsoft PowerPoint", "Final Cut Pro", "Logic Pro", "Adobe Photoshop 2025",
+  "Adobe Photoshop 2026", "Adobe Premiere Pro 2025", "Adobe Premiere Pro 2026", "Blender",
+  "Figma", "Obsidian", "Notion",
+]
+
+[[rule]]
+class = "caution"
+reason = "a terminal app: commands running in its windows stop"
+bundles = ["Terminal", "iTerm", "iTerm2", "Ghostty", "WezTerm", "Alacritty", "kitty", "Warp", "Hyper", "Tabby"]
+
+[[rule]]
+class = "caution"
+reason = "a local database: closing it may interrupt writes"
+names = ["postgres", "mysqld", "mariadbd", "mongod", "redis-server", "clickhouse", "qdrant", "milvus"]
+
+# --- safe: apps that restore their state ---------------------------------------------------------
+
+[[rule]]
+class = "safe"
+reason = "a browser: it can reopen your tabs"
+bundles = [
+  "Google Chrome", "Google Chrome Beta", "Google Chrome Canary", "Chromium", "Safari",
+  "Safari Technology Preview", "Firefox", "Firefox Developer Edition", "Microsoft Edge", "Brave Browser",
+  "Arc", "Opera", "Vivaldi", "Orion", "Zen", "Zen Browser", "DuckDuckGo",
+]
+
+[[rule]]
+class = "safe"
+reason = "a chat or media app: it syncs and reopens where you left it"
+bundles = [
+  "Slack", "Discord", "Spotify", "Microsoft Teams", "Microsoft Teams (work or school)", "zoom.us",
+  "WhatsApp", "Telegram", "Signal", "Messenger", "Music", "TV", "Podcasts", "News", "Stocks",
+  "Weather", "Maps", "Photos", "Books", "App Store", "Home", "Freeform", "Mail", "Calendar",
+  "Reminders", "Contacts",
+]

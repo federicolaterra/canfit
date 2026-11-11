@@ -1,0 +1,4 @@
+# WSL settings
+[wsl2]
+memory=6GB
+processors=4

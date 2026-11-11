@@ -1,0 +1,307 @@
+# canfit seed catalog of common apps (spec §9 source 3, §16; ADR-021).
+#
+# canfit uses these values only for apps it has no settings for and has never seen on this
+# machine, and always labels them "estimate from catalog" with low confidence. As soon as the
+# monitor has watched the app, canfit's own measurements win.
+#
+# Provenance: rounded starting values chosen by canfit's maintainers in November 2026 for a
+# moderate workload (a browser with about a dozen tabs, a chat app in a few workspaces, an editor
+# with one project open), as the memory of the app's whole process group: physical footprint on
+# macOS, private working set on Windows, proportional set size on Linux. They are not
+# measurements of any particular machine. Contributions replace them with measured values; see
+# docs/open-source/apps.md ("The seed catalog").
+#
+# Fields of each [[app]]:
+#   name         display name; unique (ignoring case) across names and aliases
+#   aliases      other names people type
+#   os           OSes the app runs on (macos, windows, linux); omit for all three
+#   category     browser, chat, meeting, music, video, editor, ide, design, office, notes, mail,
+#                ai, game, other
+#   typical_mb   typical use of the whole app, in MiB
+#   need_mb      what canfit checks: a busy but normal session, in MiB (>= typical_mb)
+#   processes    app group or process names that identify the running app (.exe / .app optional)
+#   source       where the numbers come from
+
+schema_version = 1
+reviewed = "2026-11-10"
+
+[[app]]
+name = "Google Chrome"
+aliases = ["Chrome"]
+category = "browser"
+typical_mb = 2000
+need_mb = 4000
+processes = ["Google Chrome", "chrome", "chrome.exe", "google-chrome"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Firefox"
+aliases = ["Mozilla Firefox"]
+category = "browser"
+typical_mb = 1500
+need_mb = 3500
+processes = ["Firefox", "firefox", "firefox.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Safari"
+os = ["macos"]
+category = "browser"
+typical_mb = 1000
+need_mb = 3000
+processes = ["Safari"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Microsoft Edge"
+aliases = ["Edge"]
+category = "browser"
+typical_mb = 1800
+need_mb = 4000
+processes = ["Microsoft Edge", "msedge", "msedge.exe", "microsoft-edge"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Brave Browser"
+aliases = ["Brave"]
+category = "browser"
+typical_mb = 1800
+need_mb = 4000
+processes = ["Brave Browser", "brave", "brave.exe", "brave-browser"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Arc"
+os = ["macos", "windows"]
+category = "browser"
+typical_mb = 2000
+need_mb = 4000
+processes = ["Arc", "Arc.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Slack"
+category = "chat"
+typical_mb = 600
+need_mb = 1200
+processes = ["Slack", "slack", "slack.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Discord"
+category = "chat"
+typical_mb = 500
+need_mb = 1000
+processes = ["Discord", "discord", "Discord.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Microsoft Teams"
+aliases = ["Teams"]
+category = "chat"
+typical_mb = 800
+need_mb = 1500
+processes = ["Microsoft Teams", "ms-teams", "ms-teams.exe", "Teams", "teams-for-linux"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "WhatsApp"
+os = ["macos", "windows"]
+category = "chat"
+typical_mb = 300
+need_mb = 700
+processes = ["WhatsApp", "WhatsApp.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Telegram"
+aliases = ["Telegram Desktop"]
+category = "chat"
+typical_mb = 250
+need_mb = 600
+processes = ["Telegram", "Telegram.exe", "telegram-desktop"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Zoom"
+aliases = ["zoom.us"]
+category = "meeting"
+typical_mb = 400
+need_mb = 1000
+processes = ["zoom.us", "Zoom", "Zoom.exe", "zoom"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Spotify"
+category = "music"
+typical_mb = 400
+need_mb = 800
+processes = ["Spotify", "spotify", "Spotify.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Music"
+aliases = ["Apple Music"]
+os = ["macos"]
+category = "music"
+typical_mb = 200
+need_mb = 500
+processes = ["Music"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "VLC"
+aliases = ["VLC media player"]
+category = "video"
+typical_mb = 150
+need_mb = 400
+processes = ["VLC", "vlc", "vlc.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Visual Studio Code"
+aliases = ["VS Code", "VSCode", "Code"]
+category = "editor"
+typical_mb = 800
+need_mb = 2000
+processes = ["Visual Studio Code", "Code", "code", "Code.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Cursor"
+category = "editor"
+typical_mb = 1000
+need_mb = 2500
+processes = ["Cursor", "cursor", "Cursor.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Zed"
+category = "editor"
+typical_mb = 300
+need_mb = 800
+processes = ["Zed", "zed", "zed-editor", "Zed.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Sublime Text"
+category = "editor"
+typical_mb = 150
+need_mb = 500
+processes = ["Sublime Text", "sublime_text", "sublime_text.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Xcode"
+os = ["macos"]
+category = "ide"
+typical_mb = 1500
+need_mb = 4000
+processes = ["Xcode"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Figma"
+category = "design"
+typical_mb = 800
+need_mb = 2000
+processes = ["Figma", "Figma.exe", "figma-linux"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Adobe Photoshop"
+aliases = ["Photoshop"]
+os = ["macos", "windows"]
+category = "design"
+typical_mb = 2000
+need_mb = 5000
+processes = ["Adobe Photoshop", "Photoshop", "Photoshop.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Blender"
+category = "design"
+typical_mb = 800
+need_mb = 4000
+processes = ["Blender", "blender", "blender.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "GIMP"
+category = "design"
+typical_mb = 300
+need_mb = 1000
+processes = ["GIMP", "gimp", "gimp-2.10", "gimp-2.10.exe", "gimp-3.0", "gimp-3.0.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Notion"
+category = "notes"
+typical_mb = 400
+need_mb = 900
+processes = ["Notion", "Notion.exe", "notion-app"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Obsidian"
+category = "notes"
+typical_mb = 300
+need_mb = 700
+processes = ["Obsidian", "obsidian", "Obsidian.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Microsoft Word"
+aliases = ["Word"]
+os = ["macos", "windows"]
+category = "office"
+typical_mb = 400
+need_mb = 900
+processes = ["Microsoft Word", "WINWORD", "WINWORD.EXE"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Microsoft Excel"
+aliases = ["Excel"]
+os = ["macos", "windows"]
+category = "office"
+typical_mb = 400
+need_mb = 1000
+processes = ["Microsoft Excel", "EXCEL", "EXCEL.EXE"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Microsoft Outlook"
+aliases = ["Outlook"]
+os = ["macos", "windows"]
+category = "mail"
+typical_mb = 400
+need_mb = 900
+processes = ["Microsoft Outlook", "OUTLOOK", "OUTLOOK.EXE", "olk", "olk.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "LM Studio"
+category = "ai"
+typical_mb = 500
+need_mb = 1000
+processes = ["LM Studio", "lm-studio", "LM Studio.exe"]
+source = "maintainer estimate, 2026-11 (the app only: loaded models need their own memory; check the model file with canfit)"
+
+[[app]]
+name = "ChatGPT"
+os = ["macos", "windows"]
+category = "ai"
+typical_mb = 300
+need_mb = 700
+processes = ["ChatGPT", "ChatGPT.exe"]
+source = "maintainer estimate, 2026-11"
+
+[[app]]
+name = "Claude"
+os = ["macos", "windows"]
+category = "ai"
+typical_mb = 300
+need_mb = 700
+processes = ["Claude", "claude.exe"]
+source = "maintainer estimate, 2026-11"

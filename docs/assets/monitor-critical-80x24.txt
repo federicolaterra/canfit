@@ -1,0 +1,24 @@
+ ✗ Memory is critical: macOS reports memory pressure as critical; only 931 MB of
+16.0 GB memory is available. Google Chrome is using 9.8 GB.
+╭─ ✗ Memory ───────╮╭─ ▲ Swap ─────────╮╭─ ● CPU ──────────╮╭─ ✗ Pressure ─────╮
+│931 MB available  ││growing 64.0 MB/s ││23% of 10 cores   ││critical · 90/100 │
+│████████████░  94%││███████████░░  81%││███░░░░░░░░░░  23%││████████████░  90%│
+│▄▄▄▄▄▄▄▄▅▅▅▅▅▅▅▅▅▅││▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆││▁▁▁▁▁▁▂▂▂▂▂▂▃▃▃▃▃▃││▃▄▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆│
+╰──────── measured ╯╰──────── measured ╯╰──────── measured ╯╰─────── estimated ╯
+╭─ Apps · largest first ───────────────────────────────────────────────────────╮
+│▸ ● Google Chrome                                9.8 GB   2 processes  safe   │
+│  ▲ Ollama                                       4.0 GB     1 process  caution│
+│  ▲ Visual Studio Code                           1.5 GB     1 process  caution│
+│  ● Slack                                       1000 MB     1 process  safe   │
+│  ✗ WindowServer                                 900 MB     1 process  never  │
+│  ▲ Some Tool                                    400 MB     1 process  caution│
+│  ● Spotify                                      300 MB     1 process  safe   │
+│  ✗ Terminal                                     300 MB     1 process  never  │
+│  ✗ Finder                                       190 MB     1 process  never  │
+╰ 1/15 ───────────────────────────────────────── measured · physical footprint ╯
+╭─ Why? ───────────────────────────────────────────────────────────────────────╮
+│● Google Chrome: safe, a browser: it can reopen your tabs. Press x to close it│
+│(canfit asks first).                                                          │
+│Memory is critical because macOS reports memory pressure as critical; only 931│
+╰────────────────────────────────────────────────────────────────────── ? more ╯
+ ↑↓ move  x close  ? explain  t theme  q quit                  every 1 s · dark
