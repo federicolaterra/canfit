@@ -90,6 +90,8 @@ jobs:
           canfit --version
           canfit --json | python3 -c "import json,sys; d=json.load(sys.stdin); assert d['schema']=='canfit.snapshot', d"
           sudo dpkg -r canfit
+          # bash remembers the path of commands it already ran; forget it before checking removal.
+          hash -r
           ! command -v canfit
 
       - name: Attach the packages to the release
