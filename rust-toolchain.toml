@@ -1,4 +1,6 @@
 [toolchain]
-channel = "stable"
+# Pinned to the minimum supported version (Cargo.toml `rust-version`): "stable" lets a runner use
+# whatever stable its image already has, and the macOS Intel runner's can be older than the MSRV.
+channel = "1.99"
 components = ["rustfmt", "clippy"]
 profile = "minimal"
