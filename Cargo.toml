@@ -3,7 +3,7 @@ name = "canfit"
 version = "1.0.0"
 edition = "2024"
 rust-version = "1.99"
-description = "The top for people running AI locally: can this model or app fit right now, and what should I close?"
+description = "The top command for people running local LLMs and apps"
 license = "MIT"
 repository = "https://github.com/federicolaterra/canfit"
 homepage = "https://github.com/federicolaterra/canfit"
@@ -98,7 +98,7 @@ license-file = ["LICENSE", "0"]
 section = "utils"
 priority = "optional"
 # No `depends`: cargo-deb's default ($auto) finds no shared libraries in the static binary.
-extended-description = "canfit is a cross-platform top for people running AI locally. Besides RAM, CPU and pressure it answers: can I launch this model or app right now? If not, what should I close? It checks GGUF models and apps (from their declared settings or the memory canfit measured them use). A single static binary with no runtime dependencies."
+extended-description = "canfit is a cross-platform top command for people running local LLMs and apps. Besides RAM, CPU and pressure it answers: can I launch this model or app right now? If not, what should I close? It checks GGUF models and apps (from their declared settings or the memory canfit measured them use). A single static binary with no runtime dependencies."
 assets = [
   ["target/release/canfit", "usr/bin/", "755"],
   ["README.md", "usr/share/doc/canfit/README.md", "644"],
@@ -108,7 +108,7 @@ assets = [
 
 [package.metadata.generate-rpm]
 # cargo-generate-rpm 0.21 uses the summary as the package description too.
-summary = "The top for people running AI locally: can this model or app fit right now?"
+summary = "The top command for people running local LLMs and apps"
 license = "MIT"
 assets = [
   { source = "target/release/canfit", dest = "/usr/bin/canfit", mode = "755" },

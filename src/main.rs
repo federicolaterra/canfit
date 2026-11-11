@@ -1,4 +1,4 @@
-//! canfit — the `top` for people running AI locally.
+//! canfit — the `top` command for people running local LLMs and apps.
 //!
 //! On macOS, Windows and Linux: `canfit` opens the live monitor (a one-shot snapshot when piped)
 //! and records pressure events while it runs, `canfit model.gguf` checks whether a GGUF model

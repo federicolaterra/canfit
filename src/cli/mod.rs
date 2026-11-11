@@ -34,8 +34,7 @@ pub const EXIT_USAGE: u8 = 64;
 /// Codes 0–2 are fit answers and 64 is a usage error; anything canfit could not complete is 3.
 pub const EXIT_RUNTIME: u8 = 3;
 
-/// The top for people running AI locally: can this model or app fit right now, and what
-/// should I close?
+/// The top command for people running local LLMs and apps.
 #[derive(Debug, Parser)]
 #[command(
     name = "canfit",
