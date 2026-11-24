@@ -12,7 +12,7 @@ Text captures of canfit's output and the README images, used by the documentatio
 | `fit-check-qwen2.5-coder-3b.txt` | `canfit model.gguf` (plain text, piped) | real run on an M1 Pro, 2026-11-09 |
 | `canfit-logo.svg` | The `canfit` wordmark (class `canfit-logo`, 5rem monospace text; dark text, light under a dark colour scheme) | hand-written SVG, README header |
 | `top-chip.svg` | The word `top` in white on an orange (`#EA580C`) rounded chip, for the tagline | hand-written SVG, README header |
-| `canfit-github.png` | Screenshot of the live monitor (1280×839, dark theme), shown after the README's documentation table | real run on the maintainer's Mac, 2026-11-10 |
+| `canfit-github.png` | Banner of the live monitor running in Warp, iTerm2 and Terminal, with the tagline (1280×672), shown after the README's documentation table | real runs on the maintainer's Mac, composed by the maintainer, 2026-11-24 |
 | `canfit-demo-video-github.png` | Cover image of the YouTube demo (2276×1280), linked from the README's "Watch the demo" section | provided by the maintainer, 2026-11-11 |
 
 The monitor captures are regenerated from `src/ui/snapshots/` (the `insta` render snapshots) and

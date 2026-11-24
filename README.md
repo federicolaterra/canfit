@@ -23,6 +23,8 @@ canfit answers in plain language — answers, not tables.
 [Install](#install) · [Quick start](#quick-start) · [Documentation](#explore-the-documentation) ·
 [How it compares](#how-it-compares)
 
+<a href="https://www.producthunt.com/products/canfit?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-canfit" target="_blank" rel="noopener noreferrer"><img alt="canfit - The top command for people running local LLMs and apps | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1319205&amp;theme=light&amp;t=1795507291568"></a>
+
 </div>
 
 ## What is canfit?
@@ -33,26 +35,14 @@ unclear which processes are eating it, and nobody knows what is safe to close �
 
 canfit is a cross-platform system monitor that, besides showing RAM, CPU and pressure, answers:
 
-- **Can this model fit right now?** It reads the GGUF file, estimates weights + context cache +
-  overhead, and compares that with memory available now — on Apple Silicon, also with the GPU
-  wired limit.
-- **Is there room for this app?** Docker Desktop, virtual machines (UTM, Parallels, VMware,
-  VirtualBox) and JetBrains IDEs from the memory their settings declare; any other app from what
-  canfit measured it use on your machine, or from a small built-in catalog of common apps — always
-  labelled with its source and confidence. Several models and apps together are summed into one
-  answer. See [Apps](docs/open-source/apps.md).
-- **How much does it really use?** `canfit watch -- CMD` runs any command as if you ran it
-  directly, measures the memory of it and everything it starts, warns if pressure turns critical
-  (it never closes anything), and remembers the peak, so `canfit NAME` answers from a measurement
-  next time.
-- **What should I close?** A list sorted by reclaimable memory and safety, with one-key closing
-  after confirmation — graceful first, forced only after a second confirmation — and the command
-  to close each one yourself (`kill`, `taskkill`, `systemctl stop`, `ollama stop`, …). System
-  processes, your terminal and canfit itself are never suggested.
-- **Why is my machine slow?** A unified pressure level (calm · strained · critical) with the main
-  reason in one sentence, the same on macOS, Windows and Linux.
-- **What happened while I was away?** While the monitor is open canfit records pressure events and
-  the apps behind them, locally; `canfit history` replays them.
+- [**Can this model fit right now?**](docs/open-source/usage.md#can-this-model-fit-right-now)
+- [**Is there room for this app?**](docs/open-source/usage.md#is-there-room-for-this-app)
+- [**How much does it really use?**](docs/open-source/usage.md#how-much-does-it-really-use)
+- [**What should I close?**](docs/open-source/usage.md#what-should-i-close)
+- [**Why is my machine slow?**](docs/open-source/usage.md#why-is-my-machine-slow)
+- [**What happened while I was away?**](docs/open-source/usage.md#what-happened-while-i-was-away)
+
+Each answer is described in [Usage](docs/open-source/usage.md#what-canfit-answers).
 
 Every number says whether it was **measured**, **read from config** or **estimated**. Estimates are
 conservative and never presented as measurements.
@@ -67,7 +57,7 @@ conservative and never presented as measurements.
 | [Process safety](docs/open-source/process-safety.md) | [Development](docs/open-source/development.md) |
 | | [Third-party notices](docs/open-source/THIRD_PARTY_NOTICES.md) |
 
-![The canfit live monitor: memory, swap, CPU and pressure cards, the apps using the most memory with how safe each is to close, and a Why? panel explaining the current state](docs/assets/canfit-github.png)
+![canfit, the top command for people running local LLMs and apps: the live monitor running in Warp, iTerm2 and Terminal, on macOS, Windows and Linux](docs/assets/canfit-github.png)
 
 <!-- Demo GIF: record the "doesn't fit → close Chrome → now it fits" flow, save it as
      docs/assets/canfit-demo.gif and replace this comment with:

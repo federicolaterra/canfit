@@ -12,6 +12,52 @@
 > `canfit watch -- CMD` (see [Watch](#watch)); and `canfit update` (see
 > [Update](#update)).
 
+## What canfit answers
+
+canfit is a cross-platform system monitor that, besides showing RAM, CPU and pressure, answers
+these questions.
+
+### Can this model fit right now?
+
+It reads the GGUF file, estimates weights + context cache + overhead, and compares that with
+memory available now — on Apple Silicon, also with the GPU wired limit. See [Fit check](#fit-check).
+
+### Is there room for this app?
+
+Docker Desktop, virtual machines (UTM, Parallels, VMware, VirtualBox) and JetBrains IDEs from the
+memory their settings declare; any other app from what canfit measured it use on your machine, or
+from a small built-in catalog of common apps — always labelled with its source and confidence.
+Several models and apps together are summed into one answer. See
+[App fit check](#app-fit-check) and [Apps](apps.md).
+
+### How much does it really use?
+
+`canfit watch -- CMD` runs any command as if you ran it directly, measures the memory of it and
+everything it starts, warns if pressure turns critical (it never closes anything), and remembers
+the peak, so `canfit NAME` answers from a measurement next time. See [Watch](#watch).
+
+### What should I close?
+
+A list sorted by reclaimable memory and safety, with one-key closing after confirmation —
+graceful first, forced only after a second confirmation — and the command to close each one
+yourself (`kill`, `taskkill`, `systemctl stop`, `ollama stop`, …). System processes, your terminal
+and canfit itself are never suggested. See [What to close](#what-to-close) and
+[Process safety](process-safety.md).
+
+### Why is my machine slow?
+
+A unified pressure level (calm · strained · critical) with the main reason in one sentence, the
+same on macOS, Windows and Linux. See [Live monitor](#live-monitor) and
+[Pressure index](pressure-index.md).
+
+### What happened while I was away?
+
+While the monitor is open canfit records pressure events and the apps behind them, locally;
+`canfit history` replays them. See [History](#history).
+
+Every number says whether it was **measured**, **read from config** or **estimated**. Estimates are
+conservative and never presented as measurements.
+
 ## Commands
 
 The name is the question, so there is no `fit` subcommand: the check is the default action.
