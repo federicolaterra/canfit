@@ -57,7 +57,7 @@ conservative and never presented as measurements.
 | [Process safety](docs/open-source/process-safety.md) | [Development](docs/open-source/development.md) |
 | | [Third-party notices](docs/open-source/THIRD_PARTY_NOTICES.md) |
 
-![The canfit live monitor: memory, swap, CPU and pressure cards, the apps using the most memory with how safe each is to close, and a Why? panel explaining the current state](docs/assets/canfit-github.png)
+![canfit, the top command for people running local LLMs and apps: the live monitor running in Warp, iTerm2 and Terminal, on macOS, Windows and Linux](docs/assets/canfit-github.png)
 
 <!-- Demo GIF: record the "doesn't fit → close Chrome → now it fits" flow, save it as
      docs/assets/canfit-demo.gif and replace this comment with:
